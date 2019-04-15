@@ -3,11 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# region Creating the dataset
-############################
-### Creating the dataset ###
-############################
 
+# region Create dataset
 # input = -1.0
 # x_list = []
 # y_list = []
@@ -28,71 +25,67 @@ import pandas as pd
 # plt.show()
 # endregion
 
-###################################
-### Creating the Neural Network ###
-###################################
-
-def CreateNetwork():
-    # Input/output data
-    dataFromCsv = pd.read_csv('dataset.csv')
-    X_input = np.array(dataFromCsv["input"])
-    Y_input = np.array(dataFromCsv["output"])
+def create_network():
+    # Import data
+    data_from_csv = pd.read_csv('dataset.csv')
+    x_input = np.array(data_from_csv["input"])
+    y_input = np.array(data_from_csv["output"])
 
     # Network structure
-    inputSize = 1
-    outputSize = 1
-    hiddenSize = 3
+    input_size = 1
+    output_size = 1
+    hidden_size = 3
 
     # Weights
     np.random.seed(1)
-    W1 = np.random.randn(inputSize, hiddenSize)  # (1x3) weight matrix from input to hidden layer
-    print("W1: " + str(W1))
-    W2 = np.random.randn(hiddenSize, outputSize)  # (3x1) weight matrix from hidden to output layer
-    print("W2: " + str(W2))
+    w1 = np.random.randn(input_size, hidden_size)  # (1x3) weight matrix from input to hidden layer
+    print("W1: " + str(w1))
+    w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
+    print("W2: " + str(w2))
 
-    StartTraining(X_input, Y_input, W1, W2)
+    start_training(x_input, y_input, w1, w2)
 
 
-def StartTraining(X_input, Y_input, W1, W2):
-    for index in range(1, X_input.size):
-        input = X_input[index]
-        print("Input: " + str(input))
-        output_at_output_layer = forwardpropagation(X_input[index], W1, W2)
+def start_training(x_input, y_input, w1, w2):
+    for index in range(1, x_input.size):
+        input_value = x_input[index]
+        print("Input: " + str(input_value))
+        output_at_output_layer = forward_propagation(x_input[index], w1, w2)
         print("Predicted output: " + str(output_at_output_layer))
-        actualOutput = sigmoid(Y_input[index])
-        print("Actual output: " + str(actualOutput))
-        backpropagation(input, actualOutput, output_at_output_layer, W1, W2)
+        actual_output = sigmoid(y_input[index])
+        print("Actual output: " + str(actual_output))
+        back_propagation(input_value, actual_output, output_at_output_layer, w1, w2)
 
 
 # Training (forward propagation through our network)
-def forwardpropagation(input, W1, W2):
+def forward_propagation(input_value, w1, w2):
     global output_at_input_layer
     global output_at_hidden_layer
 
-    z = np.dot(input, W1)  # dot product of input and first set of weights (1x3)
+    z = np.dot(input_value, w1)  # dot product of input_value and first set of weights (1x3)
     output_at_input_layer = z
-    print("Input · W1 = z -> " + str(z))
+    print("Input · w1 = z -> " + str(z))
     z2 = sigmoid(z)  # insert dot product z into activation function
     output_at_hidden_layer = z2
     print("Run z through sigmoid = z2 -> " + str(z2))
-    z3 = np.dot(z2, W2)  # dot product of hidden layer (z2) and second set of 3x1 weights
-    print("z2 · W2 = z3 -> " + str(z3))
+    z3 = np.dot(z2, w2)  # dot product of hidden layer (z2) and second set of 3x1 weights
+    print("z2 · w2 = z3 -> " + str(z3))
     prediction = sigmoid(z3)  # final activation function
     print("Run z3 through sigmoid = prediction -> " + str(prediction))
     return prediction
 
 
-def backpropagation(input, actualOutput, output_at_output_layer, W1, W2):
-        layer2_error = actualOutput - output_at_output_layer
-        layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
-        layer1_error = np.dot(layer2_delta, W2.T)
-        layer1_delta = layer1_error * sigmoid_prime(output_at_hidden_layer)
+def back_propagation(input_value, actual_output, output_at_output_layer, w1, w2):
+    layer2_error = actual_output - output_at_output_layer
+    layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
+    layer1_error = np.dot(layer2_delta, w2.T)
+    layer1_delta = layer1_error * sigmoid_prime(output_at_hidden_layer)
 
-        # Update weights
-        W2 = np.dot(output_at_hidden_layer.T, layer2_delta)
-        W1 = np.dot(input.T, layer1_delta)
+    # Update weights
+    w2 = np.dot(output_at_hidden_layer.T, layer2_delta)
+    w1 = np.dot(input_value.T, layer1_delta)
 
-        print("Error: " + str(layer2_error))
+    print("Error: " + str(layer2_error))
 
 
 # Activation function
@@ -101,7 +94,8 @@ def sigmoid(x):
 
 
 # Derivative of sigmoid function
-def sigmoid_prime(input):
-    return input * (1 - input)
+def sigmoid_prime(input_value):
+    return input_value * (1 - input_value)
 
-CreateNetwork()
+
+create_network()
