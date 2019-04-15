@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
 # region Create dataset
 # input = -1.0
 # x_list = []
@@ -25,7 +24,18 @@ import pandas as pd
 # plt.show()
 # endregion
 
+w1 = None
+w2 = None
+x_input = None
+y_input = None
+
+
 def create_network():
+    global w1
+    global w2
+    global x_input
+    global y_input
+
     # Import data
     data_from_csv = pd.read_csv('dataset.csv')
     x_input = np.array(data_from_csv["input"])
@@ -43,27 +53,32 @@ def create_network():
     w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
     print("W2: " + str(w2))
 
-    start_training(x_input, y_input, w1, w2)
+    start_training()
 
 
-def start_training(x_input, y_input, w1, w2):
+def start_training():
+    global w1
+    global w2
+    global x_input
+    global y_input
+
     for index in range(1, x_input.size):
         input_value = x_input[index]
         print("Input: " + str(input_value))
-        output_at_output_layer = forward_propagation(x_input[index], w1, w2)
-        print("Predicted output: " + str(output_at_output_layer))
+        output_value = forward_propagation(x_input[index])
+        print("Predicted output: " + str(output_value))
         actual_output = sigmoid(y_input[index])
         print("Actual output: " + str(actual_output))
-        back_propagation(input_value, actual_output, output_at_output_layer, w1, w2)
+        back_propagation(input_value, actual_output, output_value)
 
 
 # Training (forward propagation through our network)
-def forward_propagation(input_value, w1, w2):
-    global output_at_input_layer
+def forward_propagation(input_value):
+    global w1
+    global w2
     global output_at_hidden_layer
 
     z = np.dot(input_value, w1)  # dot product of input_value and first set of weights (1x3)
-    output_at_input_layer = z
     print("Input · w1 = z -> " + str(z))
     z2 = sigmoid(z)  # insert dot product z into activation function
     output_at_hidden_layer = z2
@@ -75,7 +90,9 @@ def forward_propagation(input_value, w1, w2):
     return prediction
 
 
-def back_propagation(input_value, actual_output, output_at_output_layer, w1, w2):
+def back_propagation(input_value, actual_output, output_at_output_layer):
+    global w1
+    global w2
     layer2_error = actual_output - output_at_output_layer
     layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
     layer1_error = np.dot(layer2_delta, w2.T)
