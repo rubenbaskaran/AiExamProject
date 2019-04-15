@@ -64,9 +64,7 @@ def create_network():
     # Weights
     np.random.seed(1)
     w1 = np.random.randn(input_size, hidden_size)  # (1x3) weight matrix from input to hidden layer
-    print("W1: " + str(w1))
     w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
-    print("W2: " + str(w2))
 
     start_training()
 
@@ -74,9 +72,13 @@ def create_network():
 def start_training():
     global x_input
     global y_input
+    global w1
+    global w2
 
     # for index in range(0, x_input.size):
     for index in range(0, 2):
+        print("W1: " + str(w1))
+        print("W2: " + str(w2))
         input_value = x_input[index]
         print("Input: " + str(input_value))
         output_value = forward_propagation(x_input[index])
