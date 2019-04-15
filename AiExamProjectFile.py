@@ -55,11 +55,21 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
+# Derivative of sigmoid function
+def sigmoid_prime(input):
+    return input * (1 - input)
+
+
 # Training (forward propagation through our network)
 def forward(input):
+    global output_at_input_layer
+    global output_at_hidden_layer
+
     z = np.dot(input, W1)  # dot product of input and first set of weights (1x3)
+    output_at_input_layer = z
     print("Input · W1 = z -> " + str(z))
     z2 = sigmoid(z)  # insert dot product z into activation function
+    output_at_hidden_layer = z2
     print("Run z through sigmoid = z2 -> " + str(z2))
     z3 = np.dot(z2, W2)  # dot product of hidden layer (z2) and second set of 3x1 weights
     print("z2 · W2 = z3 -> " + str(z3))
@@ -67,12 +77,27 @@ def forward(input):
     print("Run z3 through sigmoid = prediction -> " + str(prediction))
     return prediction
 
-#for index in range(0, X_input.size):
-for index in range(1, 2):
+
+def errorfunction(actual_output, predicted_output):
+    return actual_output - predicted_output
+
+
+# for index in range(0, X_input.size):
+for index in range(1, X_input.size):
     input = X_input[index]
     print("Input: " + str(input))
-    predictedOutput = forward(X_input[index])
-    print("Predicted output: " + str(predictedOutput))
-    actualOutput = Y_input[index]
-    print("Actual output: " + str(actualOutput) + "\n")
+    output_at_output_layer = forward(X_input[index])
+    print("Predicted output: " + str(output_at_output_layer))
+    actualOutput = sigmoid(Y_input[index])
+    print("Actual output: " + str(actualOutput))
 
+    layer2_error = errorfunction(actualOutput, output_at_output_layer)
+    layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
+    layer1_error = np.dot(layer2_delta, W2.T)
+    layer1_delta = layer1_error * sigmoid_prime(output_at_hidden_layer)
+
+    # Update weights
+    W2 = np.dot(output_at_hidden_layer.T, layer2_delta)
+    W1 = np.dot(input.T, layer1_delta)
+
+    print("Error: " + str(layer2_error))
