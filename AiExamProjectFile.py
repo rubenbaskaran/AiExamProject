@@ -32,8 +32,8 @@ def sigmoid(x):
 
 
 # Derivative of sigmoid function
-def sigmoid_prime(input_value):
-    return input_value * (1 - input_value)
+def sigmoid_prime(x):
+    return x * (1 - x)
 
 
 # endregion
