@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+
 # region Create dataset
 # input = -1.0
 # x_list = []
@@ -24,10 +25,24 @@ import pandas as pd
 # plt.show()
 # endregion
 
+# region Helper methods
+# Activation function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+
+# Derivative of sigmoid function
+def sigmoid_prime(input_value):
+    return input_value * (1 - input_value)
+
+
+# endregion
+
 w1 = None
 w2 = None
 x_input = None
 y_input = None
+output_at_hidden_layer = None
 
 
 def create_network():
@@ -57,12 +72,11 @@ def create_network():
 
 
 def start_training():
-    global w1
-    global w2
     global x_input
     global y_input
 
-    for index in range(1, x_input.size):
+    # for index in range(0, x_input.size):
+    for index in range(0, 2):
         input_value = x_input[index]
         print("Input: " + str(input_value))
         output_value = forward_propagation(x_input[index])
@@ -72,7 +86,6 @@ def start_training():
         back_propagation(input_value, actual_output, output_value)
 
 
-# Training (forward propagation through our network)
 def forward_propagation(input_value):
     global w1
     global w2
@@ -93,6 +106,8 @@ def forward_propagation(input_value):
 def back_propagation(input_value, actual_output, output_at_output_layer):
     global w1
     global w2
+    global output_at_hidden_layer
+
     layer2_error = actual_output - output_at_output_layer
     layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
     layer1_error = np.dot(layer2_delta, w2.T)
@@ -103,16 +118,6 @@ def back_propagation(input_value, actual_output, output_at_output_layer):
     w1 = np.dot(input_value.T, layer1_delta)
 
     print("Error: " + str(layer2_error))
-
-
-# Activation function
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-# Derivative of sigmoid function
-def sigmoid_prime(input_value):
-    return input_value * (1 - input_value)
 
 
 create_network()
