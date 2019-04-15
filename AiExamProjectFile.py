@@ -32,36 +32,40 @@ import pandas as pd
 ### Creating the Neural Network ###
 ###################################
 
-# Input/output data
-dataFromCsv = pd.read_csv('dataset.csv')
-X_input = np.array(dataFromCsv["input"])
-Y_input = np.array(dataFromCsv["output"])
+def CreateNetwork():
+    # Input/output data
+    dataFromCsv = pd.read_csv('dataset.csv')
+    X_input = np.array(dataFromCsv["input"])
+    Y_input = np.array(dataFromCsv["output"])
 
-# Network structure
-inputSize = 1
-outputSize = 1
-hiddenSize = 3
+    # Network structure
+    inputSize = 1
+    outputSize = 1
+    hiddenSize = 3
 
-# Weights
-np.random.seed(1)
-W1 = np.random.randn(inputSize, hiddenSize)  # (1x3) weight matrix from input to hidden layer
-print("W1: " + str(W1))
-W2 = np.random.randn(hiddenSize, outputSize)  # (3x1) weight matrix from hidden to output layer
-print("W2: " + str(W2))
+    # Weights
+    np.random.seed(1)
+    W1 = np.random.randn(inputSize, hiddenSize)  # (1x3) weight matrix from input to hidden layer
+    print("W1: " + str(W1))
+    W2 = np.random.randn(hiddenSize, outputSize)  # (3x1) weight matrix from hidden to output layer
+    print("W2: " + str(W2))
 
-
-# Activation function
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    StartTraining(X_input, Y_input, W1, W2)
 
 
-# Derivative of sigmoid function
-def sigmoid_prime(input):
-    return input * (1 - input)
+def StartTraining(X_input, Y_input, W1, W2):
+    for index in range(1, X_input.size):
+        input = X_input[index]
+        print("Input: " + str(input))
+        output_at_output_layer = forwardpropagation(X_input[index], W1, W2)
+        print("Predicted output: " + str(output_at_output_layer))
+        actualOutput = sigmoid(Y_input[index])
+        print("Actual output: " + str(actualOutput))
+        backpropagation(input, actualOutput, output_at_output_layer, W1, W2)
 
 
 # Training (forward propagation through our network)
-def forward(input):
+def forwardpropagation(input, W1, W2):
     global output_at_input_layer
     global output_at_hidden_layer
 
@@ -78,26 +82,26 @@ def forward(input):
     return prediction
 
 
-def errorfunction(actual_output, predicted_output):
-    return actual_output - predicted_output
+def backpropagation(input, actualOutput, output_at_output_layer, W1, W2):
+        layer2_error = actualOutput - output_at_output_layer
+        layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
+        layer1_error = np.dot(layer2_delta, W2.T)
+        layer1_delta = layer1_error * sigmoid_prime(output_at_hidden_layer)
+
+        # Update weights
+        W2 = np.dot(output_at_hidden_layer.T, layer2_delta)
+        W1 = np.dot(input.T, layer1_delta)
+
+        print("Error: " + str(layer2_error))
 
 
-# for index in range(0, X_input.size):
-for index in range(1, X_input.size):
-    input = X_input[index]
-    print("Input: " + str(input))
-    output_at_output_layer = forward(X_input[index])
-    print("Predicted output: " + str(output_at_output_layer))
-    actualOutput = sigmoid(Y_input[index])
-    print("Actual output: " + str(actualOutput))
+# Activation function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 
-    layer2_error = errorfunction(actualOutput, output_at_output_layer)
-    layer2_delta = layer2_error * sigmoid_prime(output_at_output_layer)
-    layer1_error = np.dot(layer2_delta, W2.T)
-    layer1_delta = layer1_error * sigmoid_prime(output_at_hidden_layer)
 
-    # Update weights
-    W2 = np.dot(output_at_hidden_layer.T, layer2_delta)
-    W1 = np.dot(input.T, layer1_delta)
+# Derivative of sigmoid function
+def sigmoid_prime(input):
+    return input * (1 - input)
 
-    print("Error: " + str(layer2_error))
+CreateNetwork()
