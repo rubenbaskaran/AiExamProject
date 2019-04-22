@@ -45,6 +45,8 @@ class NeuralNetwork(object):
         self.error_x = []
         self.error_y = []
         self.counter = 0
+        self.learning_rate = 0.3
+        self.epochs = 100
 
     def create_network(self):
         # Import data
@@ -63,7 +65,7 @@ class NeuralNetwork(object):
         self.w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
 
     def start_training(self):
-        for i in range(10):
+        for i in range(self.epochs):
             for index in range(0, self.x_input.size):
                 # for index in range(0, 2):
                 print("W1: " + str(self.w1))
@@ -94,14 +96,14 @@ class NeuralNetwork(object):
         return prediction
 
     def back_propagation(self, input_value, actual_output, output_at_output_layer):
-        layer2_error = actual_output - output_at_output_layer
-        layer2_delta = layer2_error * self.sigmoid_prime(output_at_output_layer)
-        layer1_error = np.dot(layer2_delta, self.w2.T)
-        layer1_delta = layer1_error * self.sigmoid_prime(self.output_at_hidden_layer)
+        output_error = actual_output - output_at_output_layer # error in output
+        output_delta = (output_error * self.sigmoid_prime(output_at_output_layer)) # applying derivative of sigmoid to error
+        hidden_layer_error = np.dot(output_delta, self.w2.T) # z2 error: how much our hidden layer weights contributed to output error
+        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.output_at_hidden_layer) # applying derivative of sigmoid to z2 error
 
         # Update weights
-        self.w1 += np.dot(input_value.T, layer1_delta)
-        self.w2 += np.dot(self.output_at_hidden_layer.T, layer2_delta)
+        self.w1 += np.dot(input_value.T, hidden_layer_delta)
+        self.w2 += np.dot(self.output_at_hidden_layer.T, output_delta)
 
     def test_network(self):
         print("Starting test of network")
