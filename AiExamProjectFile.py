@@ -26,18 +26,25 @@ class NeuralNetwork(object):
         plt.axis([-1, 1, -2, 2])
         plt.show()
 
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_prime(self, x):
+        return x * (1 - x)
+
+    def plot_error(self):
+        plt.plot(self.error_x, self.error_y)
+        plt.show()
+
     def __init__(self):
         self.w1 = None
         self.w2 = None
         self.x_input = None
         self.y_input = None
         self.output_at_hidden_layer = None
-
-    def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
-    def sigmoid_prime(self, x):
-        return x * (1 - x)
+        self.error_x = []
+        self.error_y = []
+        self.counter = 0
 
     def create_network(self):
         # Import data
@@ -55,20 +62,25 @@ class NeuralNetwork(object):
         self.w1 = np.random.randn(input_size, hidden_size)  # (1x3) weight matrix from input to hidden layer
         self.w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
 
-        self.start_training()
-
     def start_training(self):
-        # for index in range(0, x_input.size):
-        for index in range(0, 2):
-            print("W1: " + str(self.w1))
-            print("W2: " + str(self.w2))
-            input_value = self.x_input[index]
-            print("Input: " + str(input_value))
-            output_value = self.forward_propagation(self.x_input[index])
-            print("Predicted output: " + str(output_value))
-            actual_output = self.sigmoid(self.y_input[index])
-            print("Actual output: " + str(actual_output))
-            #self.back_propagation(input_value, actual_output, output_value)
+        for i in range(10):
+            for index in range(0, self.x_input.size):
+                # for index in range(0, 2):
+                print("W1: " + str(self.w1))
+                print("W2: " + str(self.w2))
+                input_value = self.x_input[index]
+                print("Input: " + str(input_value))
+                output_value = self.forward_propagation(self.x_input[index])
+                print("Predicted output: " + str(output_value))
+                actual_output = self.sigmoid(self.y_input[index])
+                print("Actual output: " + str(actual_output))
+                self.error_x.append(self.counter)
+                error = np.mean(np.square(actual_output - output_value))
+                self.error_y.append(error)
+                self.counter = self.counter + 1
+                self.back_propagation(input_value, actual_output, output_value)
+        print("Counter: " + str(self.counter))
+
 
     def forward_propagation(self, input_value):
         z = np.dot(input_value, self.w1)  # dot product of input_value and first set of weights (1x3)
@@ -89,11 +101,11 @@ class NeuralNetwork(object):
         layer1_delta = layer1_error * self.sigmoid_prime(self.output_at_hidden_layer)
 
         # Update weights
-        self.w2 = np.dot(self.output_at_hidden_layer.T, layer2_delta)
-        self.w1 = np.dot(input_value.T, layer1_delta)
-
-        print("Error: " + str(layer2_error))
+        self.w1 += np.dot(input_value.T, layer1_delta)
+        self.w2 += np.dot(self.output_at_hidden_layer.T, layer2_delta)
 
 
 nn = NeuralNetwork()
 nn.create_network()
+nn.start_training()
+nn.plot_error()
