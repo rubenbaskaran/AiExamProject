@@ -81,7 +81,6 @@ class NeuralNetwork(object):
                 self.back_propagation(input_value, actual_output, output_value)
         print("Counter: " + str(self.counter))
 
-
     def forward_propagation(self, input_value):
         z = np.dot(input_value, self.w1)  # dot product of input_value and first set of weights (1x3)
         print("Input · w1 = z -> " + str(z))
@@ -104,8 +103,29 @@ class NeuralNetwork(object):
         self.w1 += np.dot(input_value.T, layer1_delta)
         self.w2 += np.dot(self.output_at_hidden_layer.T, layer2_delta)
 
+    def test_network(self):
+        print("Starting test of network")
+        print("W1: " + str(self.w1))
+        print("W2: " + str(self.w2))
+        x_values = []
+        y_values_predicted = []
+        y_values_actual = []
+
+        for index in range(0, self.x_input.size):
+            x_values.append(self.x_input[index])
+            y_values_predicted.append(self.forward_propagation(self.x_input[index])[0][0])
+            y_values_actual.append(self.sigmoid(self.y_input[index]))
+
+        figure = plt.figure()
+        axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
+        axes.plot(x_values, y_values_predicted)
+        axes.plot(x_values, y_values_actual)
+        axes.set_title("Test of network")
+        plt.show()
+
 
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
 nn.plot_error()
+nn.test_network()
