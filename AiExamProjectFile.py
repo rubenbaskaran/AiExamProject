@@ -125,6 +125,7 @@ class NeuralNetwork(object):
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
+    # Given an output value from a neuron, we want to calculate it’s slope
     def sigmoid_prime(self, x):
         return x * (1 - x)
 
