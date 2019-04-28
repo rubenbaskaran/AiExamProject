@@ -17,6 +17,9 @@ class NeuralNetwork(object):
         self.counter = 0
         self.learning_rate = 0.1
         self.epochs = 10
+        self.input_size = 1
+        self.hidden_size = 3
+        self.output_size = 1
 
     def create_dataset(self):
         input = -1.0
@@ -44,15 +47,10 @@ class NeuralNetwork(object):
         self.x_input = np.array(data_from_csv["input"])
         self.y_input = np.array(data_from_csv["output"])
 
-        # Network structure
-        input_size = 1
-        output_size = 1
-        hidden_size = 3
-
         # Weights
         np.random.seed(1)
-        self.w1 = np.random.randn(input_size, hidden_size)  # (1x3) weight matrix from input to hidden layer
-        self.w2 = np.random.randn(hidden_size, output_size)  # (3x1) weight matrix from hidden to output layer
+        self.w1 = np.random.randn(self.input_size, self.hidden_size)  # (1x3) weight matrix from input to hidden layer
+        self.w2 = np.random.randn(self.hidden_size, self.output_size)  # (3x1) weight matrix from hidden to output layer
 
     def start_training(self):
         for i in range(self.epochs):
@@ -73,6 +71,7 @@ class NeuralNetwork(object):
                 self.back_propagation(input_value, actual_output, output_value)
         print("Counter: " + str(self.counter))
 
+    # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
         z = np.dot(input_value, self.w1)  # dot product of input_value and first set of weights (1x3)
         print("Input · w1 = z -> " + str(z))
@@ -85,6 +84,7 @@ class NeuralNetwork(object):
         print("Run z3 through sigmoid = prediction -> " + str(prediction))
         return prediction
 
+    # back-propagate the error in order to train the network
     def back_propagation(self, input_value, actual_output, predicted_output):
         # error at output layer
         output_error = actual_output - predicted_output
