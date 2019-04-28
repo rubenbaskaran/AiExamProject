@@ -100,8 +100,8 @@ class NeuralNetwork(object):
         hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.output_at_hidden_layer)
 
         # Update weights
-        self.w1 += np.dot(input_value.T, hidden_layer_delta)
-        self.w2 += np.dot(self.output_at_hidden_layer.T, output_delta)
+        self.w1 += np.dot(input_value.T, hidden_layer_delta) * self.learning_rate
+        self.w2 += np.dot(self.output_at_hidden_layer.T, output_delta) * self.learning_rate
 
     def test_network(self):
         print("Starting test of network")
