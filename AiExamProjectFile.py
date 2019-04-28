@@ -6,6 +6,18 @@ import pandas as pd
 
 class NeuralNetwork(object):
 
+    def __init__(self):
+        self.w1 = None
+        self.w2 = None
+        self.x_input = None
+        self.y_input = None
+        self.output_at_hidden_layer = None
+        self.error_x = []
+        self.error_y = []
+        self.counter = 0
+        self.learning_rate = 0.1
+        self.epochs = 10
+
     def create_dataset(self):
         input = -1.0
         x_list = []
@@ -25,28 +37,6 @@ class NeuralNetwork(object):
         plt.plot(x_list, y_list)
         plt.axis([-1, 1, -2, 2])
         plt.show()
-
-    def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
-    def sigmoid_prime(self, x):
-        return x * (1 - x)
-
-    def plot_error(self):
-        plt.plot(self.error_x, self.error_y)
-        plt.show()
-
-    def __init__(self):
-        self.w1 = None
-        self.w2 = None
-        self.x_input = None
-        self.y_input = None
-        self.output_at_hidden_layer = None
-        self.error_x = []
-        self.error_y = []
-        self.counter = 0
-        self.learning_rate = 0.3
-        self.epochs = 100
 
     def create_network(self):
         # Import data
@@ -96,10 +86,13 @@ class NeuralNetwork(object):
         return prediction
 
     def back_propagation(self, input_value, actual_output, output_at_output_layer):
-        output_error = actual_output - output_at_output_layer # error in output
-        output_delta = (output_error * self.sigmoid_prime(output_at_output_layer)) # applying derivative of sigmoid to error
-        hidden_layer_error = np.dot(output_delta, self.w2.T) # z2 error: how much our hidden layer weights contributed to output error
-        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.output_at_hidden_layer) # applying derivative of sigmoid to z2 error
+        output_error = actual_output - output_at_output_layer  # error in output
+        output_delta = (output_error * self.sigmoid_prime(
+            output_at_output_layer))  # applying derivative of sigmoid to error
+        hidden_layer_error = np.dot(output_delta,
+                                    self.w2.T)  # z2 error: how much our hidden layer weights contributed to output error
+        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(
+            self.output_at_hidden_layer)  # applying derivative of sigmoid to z2 error
 
         # Update weights
         self.w1 += np.dot(input_value.T, hidden_layer_delta)
@@ -122,7 +115,20 @@ class NeuralNetwork(object):
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
         axes.plot(x_values, y_values_predicted)
         axes.plot(x_values, y_values_actual)
-        axes.set_title("Test of network")
+        axes.set_title("Actual model vs. trained model")
+        plt.show()
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_prime(self, x):
+        return x * (1 - x)
+
+    def plot_error(self):
+        plt.plot(self.error_x, self.error_y)
+        plt.xlabel("Training sample")
+        plt.ylabel("Error")
+        plt.title("Error for each training sample")
         plt.show()
 
 
