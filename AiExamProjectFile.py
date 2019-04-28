@@ -85,14 +85,18 @@ class NeuralNetwork(object):
         print("Run z3 through sigmoid = prediction -> " + str(prediction))
         return prediction
 
-    def back_propagation(self, input_value, actual_output, output_at_output_layer):
-        output_error = actual_output - output_at_output_layer  # error in output
-        output_delta = (output_error * self.sigmoid_prime(
-            output_at_output_layer))  # applying derivative of sigmoid to error
-        hidden_layer_error = np.dot(output_delta,
-                                    self.w2.T)  # z2 error: how much our hidden layer weights contributed to output error
-        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(
-            self.output_at_hidden_layer)  # applying derivative of sigmoid to z2 error
+    def back_propagation(self, input_value, actual_output, predicted_output):
+        # error at output layer
+        output_error = actual_output - predicted_output
+
+        # figure out how much to change weights between hidden layer and output layer
+        output_delta = (output_error * self.sigmoid_prime(predicted_output))
+
+        # error at hidden layer
+        hidden_layer_error = np.dot(output_delta, self.w2.T)
+
+        # figure out how much to change weights between input layer and hidden layer
+        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.output_at_hidden_layer)
 
         # Update weights
         self.w1 += np.dot(input_value.T, hidden_layer_delta)
