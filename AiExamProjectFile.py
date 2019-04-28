@@ -93,6 +93,7 @@ class NeuralNetwork(object):
         output_delta = (output_error * self.sigmoid_prime(predicted_output))
 
         # error at hidden layer
+        # Think of the error traveling back along the weights of the output layer to the neurons in the hidden layer
         hidden_layer_error = np.dot(output_delta, self.w2.T)
 
         # figure out how much to change weights between input layer and hidden layer
