@@ -85,9 +85,9 @@ class NeuralNetwork(object):
         return prediction
 
     # back-propagate the error in order to train the network
-    def back_propagation(self, input_value, actual_output, predicted_output):
+    def back_propagation(self, input_value, expected_output, predicted_output):
         # error at output layer
-        output_error = actual_output - predicted_output
+        output_error = expected_output - predicted_output
 
         # figure out how much to change weights between hidden layer and output layer
         output_delta = (output_error * self.sigmoid_prime(predicted_output))
