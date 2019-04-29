@@ -15,10 +15,10 @@ class NeuralNetwork(object):
         self.error_x = []
         self.error_y = []
         self.counter = 0
-        self.learning_rate = 0.1
-        self.epochs = 20
+        self.learning_rate = 0.3
+        self.epochs = 500
         self.input_size = 1
-        self.hidden_size = 1000
+        self.hidden_size = 5
         self.output_size = 1
 
     def create_dataset(self):
