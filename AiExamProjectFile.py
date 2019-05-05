@@ -65,7 +65,7 @@ class NeuralNetwork(object):
                 expected_output = self.sigmoid(self.y_input[index])
                 print("Actual output: " + str(expected_output))
                 self.error_x.append(self.counter)
-                error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~
+                error = (expected_output - predicted_output)**2  # ~~~~ Maybe modify this line ~~~~ Only squared for visual purpose
                 self.error_y.append(error)
                 self.counter += 1
                 self.back_propagation(input_value, expected_output, predicted_output)
