@@ -44,8 +44,8 @@ class NeuralNetwork(object):
     def create_network(self):
         # Import data
         data_from_csv = pd.read_csv('dataset.csv')
-        self.x_input = np.array(data_from_csv["input"])
-        self.y_input = np.array(data_from_csv["output"])
+        self.x_input = np.array(data_from_csv["input"])  # ~~~~ Maybe need scaling? ~~~~
+        self.y_input = np.array(data_from_csv["output"])  # ~~~~ Maybe need scaling? ~~~~
 
         # Weights
         np.random.seed(1)
@@ -60,16 +60,16 @@ class NeuralNetwork(object):
                 print("W2: " + str(self.w2))
                 input_value = self.x_input[index]
                 print("Input: " + str(input_value))
-                output_value = self.forward_propagation(self.x_input[index])
-                print("Predicted output: " + str(output_value))
-                actual_output = self.sigmoid(self.y_input[index])
-                print("Actual output: " + str(actual_output))
+                predicted_output = self.forward_propagation(self.x_input[index])
+                print("Predicted output: " + str(predicted_output))
+                expected_output = self.sigmoid(self.y_input[index])
+                print("Actual output: " + str(expected_output))
                 self.error_x.append(self.counter)
-                error = np.mean(np.square(actual_output - output_value))
+                error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~ np.mean(np.square(actual_output - output_value))
                 self.error_y.append(error)
                 self.counter = self.counter + 1
-                self.back_propagation(input_value, actual_output, output_value)
-        print("Counter: " + str(self.counter))
+                self.back_propagation(input_value, expected_output, predicted_output)
+            print("Counter: " + str(self.counter))
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -82,12 +82,12 @@ class NeuralNetwork(object):
         print("z2 · w2 = z3 -> " + str(z3))
         prediction = self.sigmoid(z3)  # final activation function
         print("Run z3 through sigmoid = prediction -> " + str(prediction))
-        return prediction
+        return prediction[0][0]
 
     # back-propagate the error in order to train the network
     def back_propagation(self, input_value, expected_output, predicted_output):
         # error at output layer
-        output_error = expected_output - predicted_output
+        output_error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~
 
         # figure out how much to change weights between hidden layer and output layer
         output_delta = (output_error * self.sigmoid_prime(predicted_output))
@@ -113,7 +113,7 @@ class NeuralNetwork(object):
 
         for index in range(0, self.x_input.size):
             x_values.append(self.x_input[index])
-            y_values_predicted.append(self.forward_propagation(self.x_input[index])[0][0])
+            y_values_predicted.append(self.forward_propagation(self.x_input[index]))
             y_values_actual.append(self.sigmoid(self.y_input[index]))
 
         figure = plt.figure()
