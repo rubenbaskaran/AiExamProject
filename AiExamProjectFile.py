@@ -11,7 +11,7 @@ class NeuralNetwork(object):
         self.w2 = None
         self.x_input = None
         self.y_input = None
-        self.output_at_hidden_layer = None
+        self.hidden_layer_output = None
         self.error_x = []
         self.error_y = []
         self.counter = 0
@@ -65,9 +65,9 @@ class NeuralNetwork(object):
                 expected_output = self.sigmoid(self.y_input[index])
                 print("Actual output: " + str(expected_output))
                 self.error_x.append(self.counter)
-                error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~ np.mean(np.square(actual_output - output_value))
+                error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~
                 self.error_y.append(error)
-                self.counter = self.counter + 1
+                self.counter += 1
                 self.back_propagation(input_value, expected_output, predicted_output)
             print("Counter: " + str(self.counter))
 
@@ -76,7 +76,7 @@ class NeuralNetwork(object):
         z = np.dot(input_value, self.w1)  # dot product of input_value and first set of weights (1x3)
         print("Input · w1 = z -> " + str(z))
         z2 = self.sigmoid(z)  # insert dot product z into activation function
-        self.output_at_hidden_layer = z2
+        self.hidden_layer_output = z2
         print("Run z through sigmoid = z2 -> " + str(z2))
         z3 = np.dot(z2, self.w2)  # dot product of hidden layer (z2) and second set of 3x1 weights
         print("z2 · w2 = z3 -> " + str(z3))
@@ -97,11 +97,11 @@ class NeuralNetwork(object):
         hidden_layer_error = np.dot(output_delta, self.w2.T)
 
         # figure out how much to change weights between input layer and hidden layer
-        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.output_at_hidden_layer)
+        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.hidden_layer_output)
 
         # Update weights
         self.w1 += np.dot(input_value.T, hidden_layer_delta) * self.learning_rate
-        self.w2 += np.dot(self.output_at_hidden_layer.T, output_delta) * self.learning_rate
+        self.w2 += np.dot(self.hidden_layer_output.T, output_delta) * self.learning_rate
 
     def test_network(self):
         print("Starting test of network")
