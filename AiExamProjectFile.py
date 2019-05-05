@@ -15,7 +15,7 @@ class NeuralNetwork(object):
         self.error_x = []
         self.error_y = []
         self.counter = 0
-        self.learning_rate = 0.3
+        self.learning_rate = 0.5
         self.epochs = 600
         self.input_size = 1
         self.hidden_size = 5
