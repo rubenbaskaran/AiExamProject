@@ -14,6 +14,7 @@ class NeuralNetwork(object):
         self.hidden_layer_output = None
         self.error_x = []
         self.error_y = []
+        self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
         self.epochs = 600
@@ -64,11 +65,13 @@ class NeuralNetwork(object):
                 print("Predicted output: " + str(predicted_output))
                 expected_output = self.sigmoid(self.y_input[index])
                 print("Actual output: " + str(expected_output))
-                self.error_x.append(self.counter)
-                error = (expected_output - predicted_output)**2  # ~~~~ Maybe modify this line ~~~~ Only squared for visual purpose
-                self.error_y.append(error)
-                self.counter += 1
+                error = (expected_output - predicted_output) ** 2  # ~~~~ Maybe modify this line ~~~~
+                self.global_error += error
                 self.back_propagation(input_value, expected_output, predicted_output)
+            self.error_x.append(i)
+            self.error_y.append(self.global_error/self.x_input.size)
+            self.global_error = 0
+            self.counter += 1
             print("Counter: " + str(self.counter))
 
     # forward-propagate the input in order to calculate an output
@@ -132,9 +135,9 @@ class NeuralNetwork(object):
 
     def plot_error(self):
         plt.plot(self.error_x, self.error_y)
-        plt.xlabel("Training sample")
-        plt.ylabel("Error")
-        plt.title("Error for each training sample")
+        plt.xlabel("Epoch")
+        plt.ylabel("Mean squared error")
+        plt.title("Mean squared error for each epoch")
         plt.show()
 
 
