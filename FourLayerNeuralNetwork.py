@@ -60,33 +60,22 @@ class NeuralNetwork(object):
     def start_training(self):
         for i in range(self.epochs):
             for index in range(0, self.x_input.size):
-                # for index in range(0, 2):
-                print("W1: " + str(self.w1))
-                print("W2: " + str(self.w2))
-                print("W3: " + str(self.w3))
-                input_value = self.x_input[index]
-                print("Input: " + str(input_value))
                 predicted_output = self.forward_propagation(self.x_input[index])
-                print("Predicted output: " + str(predicted_output))
                 expected_output = self.sigmoid(self.y_input[index])
-                print("Actual output: " + str(expected_output))
-                error = (expected_output - predicted_output) ** 2  # ~~~~ Maybe modify this line ~~~~
+                error = (expected_output - predicted_output) ** 2
                 self.global_error += error
-                self.back_propagation(input_value, expected_output, predicted_output)
+                self.back_propagation(self.x_input[index], expected_output, predicted_output)
             self.error_x.append(i)
             self.error_y.append(self.global_error/self.x_input.size)
             self.global_error = 0
             self.counter += 1
-            print("Counter: " + str(self.counter))
+            print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
         self.L2_output = self.sigmoid(np.dot(input_value, self.w1))
-        print("sigmoid(input_value · w1) = L2_output -> " + str(self.L2_output))
         self.L3_output = self.sigmoid(np.dot(self.L2_output, self.w2))
-        print("sigmoid(L2_output · w2 = L3_output -> " + str(self.L3_output))
         prediction = self.sigmoid(np.dot(self.L3_output, self.w3))
-        print("sigmoid(L3_output · w3 = prediction -> " + str(prediction))
         return prediction[0][0]
 
     # back-propagate the error in order to train the network
@@ -109,10 +98,6 @@ class NeuralNetwork(object):
         self.w3 += np.dot(self.L3_output.T, w3_delta) * self.learning_rate
 
     def test_network(self):
-        print("Starting test of network")
-        print("W1: " + str(self.w1))
-        print("W2: " + str(self.w2))
-        print("W3: " + str(self.w3))
         x_values = []
         y_values_predicted = []
         y_values_actual = []
@@ -144,11 +129,11 @@ class NeuralNetwork(object):
         plt.show()
 
 
-start = dt.datetime.now()
+print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
-print("\nStarted at: " + str(start) + "\n" + "Ended at: " + str(dt.datetime.now()))
+print("Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()
 
