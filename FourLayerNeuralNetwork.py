@@ -20,10 +20,10 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 500
+        self.epochs = 10000
         self.input_size = 1
-        self.first_hidden_size = 5
-        self.second_hidden_size = 5
+        self.first_hidden_size = 15
+        self.second_hidden_size = 15
         self.output_size = 1
 
     def create_dataset(self):
