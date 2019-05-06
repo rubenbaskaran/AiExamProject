@@ -149,6 +149,7 @@ start = dt.datetime.now()
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
+print("\nStarted at: " + str(start) + "\n" + "Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()
-print("\nStarted at: " + str(start) + "\n" + "Ended at: " + str(dt.datetime.now()))
+
