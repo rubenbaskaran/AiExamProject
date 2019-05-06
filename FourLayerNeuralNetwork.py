@@ -22,8 +22,8 @@ class NeuralNetwork(object):
         self.learning_rate = 0.5
         self.epochs = 10000
         self.input_size = 1
-        self.first_hidden_size = 15
-        self.second_hidden_size = 15
+        self.first_hidden_size = 20
+        self.second_hidden_size = 20
         self.output_size = 1
 
     def create_dataset(self):
@@ -79,16 +79,20 @@ class NeuralNetwork(object):
         return prediction[0][0]
 
     # back-propagate the error in order to train the network
+    # Using partial derivative and chain-rule
     def back_propagation(self, input_value, expected_output, predicted_output):
-        # Figure out how much to change W3
+        # Figure out how much W3 contributed to output error
+        # And how much to change W3
         L4_error = expected_output - predicted_output
         w3_delta = L4_error * self.sigmoid_prime(predicted_output)
 
-        # Figure out how much to change W2
+        # Figure out how much W2 contributed to output error
+        # And how much to change W2
         L3_error = np.dot(w3_delta, self.w3.T)
         w2_delta = L3_error * self.sigmoid_prime(self.L3_output)
 
-        # Figure out how much to change W1
+        # Figure out how much W1 contributed to output error
+        # And how much to change W1
         L2_error = np.dot(w2_delta, self.w2.T)
         w1_delta = L2_error * self.sigmoid_prime(self.L2_output)
 

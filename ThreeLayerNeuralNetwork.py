@@ -12,15 +12,15 @@ class NeuralNetwork(object):
         self.w2 = None
         self.x_input = None
         self.y_input = None
-        self.hidden_layer_output = None
+        self.L2_output = None
         self.error_x = []
         self.error_y = []
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 1000
+        self.epochs = 10000
         self.input_size = 1
-        self.hidden_size = 5
+        self.hidden_size = 20
         self.output_size = 1
 
     def create_dataset(self):
@@ -56,60 +56,41 @@ class NeuralNetwork(object):
     def start_training(self):
         for i in range(self.epochs):
             for index in range(0, self.x_input.size):
-                # for index in range(0, 2):
-                print("W1: " + str(self.w1))
-                print("W2: " + str(self.w2))
-                input_value = self.x_input[index]
-                print("Input: " + str(input_value))
                 predicted_output = self.forward_propagation(self.x_input[index])
-                print("Predicted output: " + str(predicted_output))
                 expected_output = self.sigmoid(self.y_input[index])
-                print("Actual output: " + str(expected_output))
                 error = (expected_output - predicted_output) ** 2  # ~~~~ Maybe modify this line ~~~~
                 self.global_error += error
-                self.back_propagation(input_value, expected_output, predicted_output)
+                self.back_propagation(self.x_input[index], expected_output, predicted_output)
             self.error_x.append(i)
             self.error_y.append(self.global_error/self.x_input.size)
             self.global_error = 0
             self.counter += 1
-            print("Counter: " + str(self.counter))
+            print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
-        z = np.dot(input_value, self.w1)  # dot product of input_value and first set of weights (1x3)
-        print("Input · w1 = z -> " + str(z))
-        z2 = self.sigmoid(z)  # insert dot product z into activation function
-        self.hidden_layer_output = z2
-        print("Run z through sigmoid = z2 -> " + str(z2))
-        z3 = np.dot(z2, self.w2)  # dot product of hidden layer (z2) and second set of 3x1 weights
-        print("z2 · w2 = z3 -> " + str(z3))
-        prediction = self.sigmoid(z3)  # final activation function
-        print("Run z3 through sigmoid = prediction -> " + str(prediction))
+        self.L2_output = self.sigmoid(np.dot(input_value, self.w1))
+        prediction = self.sigmoid(np.dot(self.L2_output, self.w2))
         return prediction[0][0]
 
     # back-propagate the error in order to train the network
+    # Using partial derivative and chain-rule
     def back_propagation(self, input_value, expected_output, predicted_output):
-        # error at output layer
-        output_error = expected_output - predicted_output  # ~~~~ Maybe modify this line ~~~~
+        # Figure out how much W2 contributed to output error
+        # And how much to change W2
+        L3_error = expected_output - predicted_output
+        w2_delta = (L3_error * self.sigmoid_prime(predicted_output))
 
-        # figure out how much to change weights between hidden layer and output layer
-        output_delta = (output_error * self.sigmoid_prime(predicted_output))
-
-        # error at hidden layer
-        # Think of the error traveling back along the weights of the output layer to the neurons in the hidden layer
-        hidden_layer_error = np.dot(output_delta, self.w2.T)
-
-        # figure out how much to change weights between input layer and hidden layer
-        hidden_layer_delta = hidden_layer_error * self.sigmoid_prime(self.hidden_layer_output)
+        # Figure out how much W1 contributed to output error
+        # And how much to change W1
+        L2_error = np.dot(w2_delta, self.w2.T)
+        w1_delta = L2_error * self.sigmoid_prime(self.L2_output)
 
         # Update weights
-        self.w1 += np.dot(input_value.T, hidden_layer_delta) * self.learning_rate
-        self.w2 += np.dot(self.hidden_layer_output.T, output_delta) * self.learning_rate
+        self.w1 += np.dot(input_value.T, w1_delta) * self.learning_rate
+        self.w2 += np.dot(self.L2_output.T, w2_delta) * self.learning_rate
 
     def test_network(self):
-        print("Starting test of network")
-        print("W1: " + str(self.w1))
-        print("W2: " + str(self.w2))
         x_values = []
         y_values_predicted = []
         y_values_actual = []
@@ -141,10 +122,10 @@ class NeuralNetwork(object):
         plt.show()
 
 
-start = dt.datetime.now()
+print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
-print("\nStarted at: " + str(start) + "\n" + "Ended at: " + str(dt.datetime.now()))
+print("Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()
