@@ -50,7 +50,6 @@ class NeuralNetwork(object):
         self.y_input = np.array(data_from_csv["output"])  # ~~~~ Maybe need scaling? ~~~~
 
         # Weights
-        np.random.seed(1)
         self.w1 = np.random.randn(self.input_size, self.hidden_size)  # (1x3) weight matrix from input to hidden layer
         self.w2 = np.random.randn(self.hidden_size, self.output_size)  # (3x1) weight matrix from hidden to output layer
 

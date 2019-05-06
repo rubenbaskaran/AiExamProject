@@ -53,7 +53,6 @@ class NeuralNetwork(object):
         self.y_input = np.array(data_from_csv["output"])
 
         # Weights
-        np.random.seed(1)
         self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (1x5) weight matrix from input to hidden layer
         self.w2 = np.random.randn(self.first_hidden_size, self.second_hidden_size)  # (5x5) weight matrix from hidden to output layer
         self.w3 = np.random.randn(self.second_hidden_size, self.output_size)        # (5x1) weight matrix from hidden to output layer
