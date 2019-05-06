@@ -2,6 +2,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import datetime as dt
 
 
 class NeuralNetwork(object):
@@ -141,8 +142,10 @@ class NeuralNetwork(object):
         plt.show()
 
 
+start = dt.datetime.now()
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
 nn.plot_error()
 nn.test_network()
+print("\nStarted at: " + str(start) + "\n" + "Ended at: " + str(dt.datetime.now()))
