@@ -127,7 +127,7 @@ class NeuralNetwork(object):
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
         axes.plot(x_values, y_values_predicted)
         axes.plot(x_values, y_values_actual)
-        axes.set_title("Actual model vs. trained model")
+        axes.set_title("Actual model vs. trained model (4 Layers)")
         plt.show()
 
     def sigmoid(self, x):
@@ -141,7 +141,7 @@ class NeuralNetwork(object):
         plt.plot(self.error_x, self.error_y)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch")
+        plt.title("Mean squared error for each epoch (4 Layers)")
         plt.show()
 
 
