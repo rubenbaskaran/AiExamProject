@@ -34,10 +34,10 @@ class NeuralNetwork(object):
 
         while input <= 1:
             x_y_values.append(input)
-            output = np.exp(-(input ** 2 + input ** 2) / 0.1)
+            output = round(np.exp(-(input ** 2 + input ** 2) / 0.1), 3)
             z_values.append(output)
             StringBuilder += str(input) + "," + str(output) + "\n"
-            input += 0.05
+            input = round(input + 0.05, 3)
 
         file.write(StringBuilder)
 
