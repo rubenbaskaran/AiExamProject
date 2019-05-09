@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import datetime as dt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class NeuralNetwork(object):
@@ -25,22 +26,30 @@ class NeuralNetwork(object):
 
     def create_dataset(self):
         input = -1.0
-        x_list = []
-        y_list = []
-        f = open("FunctionTwoDataset.csv", "w")
-        f.write("input,output\n")
+        x_y_values = []
+        z_values = []
+        file = open("FunctionTwoDataset.csv", "w")
+        file.write("input,output\n")
         StringBuilder = ""
 
         while input <= 1:
-            x_list.append(input)
-            output = round(math.sin(2 * math.pi * input) + math.sin(5 * math.pi * input), 3)
-            y_list.append(output)
-            StringBuilder = StringBuilder + str(input) + "," + str(output) + "\n"
-            input = round(input + 0.002, 3)
+            x_y_values.append(input)
+            output = np.exp(-(input ** 2 + input ** 2) / 0.1)
+            z_values.append(output)
+            StringBuilder += str(input) + "," + str(output) + "\n"
+            input += 0.05
 
-        f.write(StringBuilder)
-        plt.plot(x_list, y_list)
-        plt.axis([-1, 1, -2, 2])
+        file.write(StringBuilder)
+
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        X = np.arange(-1, 1, 0.05)
+        Y = np.arange(-1, 1, 0.05)
+        X, Y = np.meshgrid(X, Y)
+        Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
+
+        ax.plot_surface(X, Y, Z)
+        ax.set_zlim(0, 1)
         plt.show()
 
     def create_network(self):
@@ -62,7 +71,7 @@ class NeuralNetwork(object):
                 self.global_error += error
                 self.back_propagation(self.x_input[index], expected_output, predicted_output)
             self.error_x.append(i)
-            self.error_y.append(self.global_error/self.x_input.size)
+            self.error_y.append(self.global_error / self.x_input.size)
             self.global_error = 0
             self.counter += 1
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
@@ -122,10 +131,11 @@ class NeuralNetwork(object):
         plt.show()
 
 
-print("Started at: " + str(dt.datetime.now()))
+# print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
-nn.create_network()
-nn.start_training()
-print("Ended at: " + str(dt.datetime.now()))
-nn.plot_error()
-nn.test_network()
+# nn.create_network()
+# nn.start_training()
+# print("Ended at: " + str(dt.datetime.now()))
+# nn.plot_error()
+# nn.test_network()
+nn.create_dataset()
