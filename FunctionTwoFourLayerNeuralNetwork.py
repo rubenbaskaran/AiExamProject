@@ -1,8 +1,8 @@
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import datetime as dt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class NeuralNetwork(object):
@@ -11,8 +11,8 @@ class NeuralNetwork(object):
         self.w1 = None
         self.w2 = None
         self.w3 = None
-        self.x_input = None
-        self.y_input = None
+        self.x_y_input = None
+        self.z_output = None
         self.L2_output = None
         self.L3_output = None
         self.error_x = []
@@ -21,36 +21,44 @@ class NeuralNetwork(object):
         self.counter = 0
         self.learning_rate = 0.5
         self.epochs = 10000
-        self.input_size = 1
+        self.input_size = 2
         self.first_hidden_size = 20
         self.second_hidden_size = 20
         self.output_size = 1
 
     def create_dataset(self):
         input = -1.0
-        x_list = []
-        y_list = []
-        f = open("FunctionTwoDataset.csv", "w")
-        f.write("input,output\n")
+        x_y_values = []
+        z_values = []
+        file = open("FunctionTwoDataset.csv", "w")
+        file.write("input,output\n")
         StringBuilder = ""
 
         while input <= 1:
-            x_list.append(input)
-            output = round(math.sin(2 * math.pi * input) + math.sin(5 * math.pi * input), 3)
-            y_list.append(output)
-            StringBuilder = StringBuilder + str(input) + "," + str(output) + "\n"
-            input = round(input + 0.002, 3)
+            x_y_values.append(input)
+            output = round(np.exp(-(input ** 2 + input ** 2) / 0.1), 3)
+            z_values.append(output)
+            StringBuilder += str(input) + "," + str(output) + "\n"
+            input = round(input + 0.05, 3)
 
-        f.write(StringBuilder)
-        plt.plot(x_list, y_list)
-        plt.axis([-1, 1, -2, 2])
+        file.write(StringBuilder)
+
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        X = x_y_values
+        Y = x_y_values
+        X, Y = np.meshgrid(X, Y)
+        Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
+
+        ax.plot_surface(X, Y, Z)
+        ax.set_zlim(0, 1)
         plt.show()
 
     def create_network(self):
         # Import data
         data_from_csv = pd.read_csv('FunctionTwoDataset.csv')
-        self.x_input = np.array(data_from_csv["input"])
-        self.y_input = np.array(data_from_csv["output"])
+        self.x_y_input = np.array(data_from_csv["input"])
+        self.z_output = np.array(data_from_csv["output"])
 
         # Weights
         self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (1x5) weight matrix from input to hidden layer
@@ -59,14 +67,14 @@ class NeuralNetwork(object):
 
     def start_training(self):
         for i in range(self.epochs):
-            for index in range(0, self.x_input.size):
-                predicted_output = self.forward_propagation(self.x_input[index])
-                expected_output = self.sigmoid(self.y_input[index])
+            for index in range(0, self.x_y_input.size):
+                predicted_output = self.forward_propagation(self.x_y_input[index])
+                expected_output = self.sigmoid(self.z_output[index])
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
-                self.back_propagation(self.x_input[index], expected_output, predicted_output)
+                self.back_propagation(self.x_y_input[index], expected_output, predicted_output)
             self.error_x.append(i)
-            self.error_y.append(self.global_error/self.x_input.size)
+            self.error_y.append(self.global_error / self.x_y_input.size)
             self.global_error = 0
             self.counter += 1
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
@@ -106,10 +114,10 @@ class NeuralNetwork(object):
         y_values_predicted = []
         y_values_actual = []
 
-        for index in range(0, self.x_input.size):
-            x_values.append(self.x_input[index])
-            y_values_predicted.append(self.forward_propagation(self.x_input[index]))
-            y_values_actual.append(self.sigmoid(self.y_input[index]))
+        for index in range(0, self.x_y_input.size):
+            x_values.append(self.x_y_input[index])
+            y_values_predicted.append(self.forward_propagation(self.x_y_input[index]))
+            y_values_actual.append(self.sigmoid(self.z_output[index]))
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
