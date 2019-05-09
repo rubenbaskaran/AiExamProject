@@ -1,4 +1,3 @@
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -43,8 +42,8 @@ class NeuralNetwork(object):
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        X = np.arange(-1, 1, 0.05)
-        Y = np.arange(-1, 1, 0.05)
+        X = x_y_values
+        Y = x_y_values
         X, Y = np.meshgrid(X, Y)
         Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
 
