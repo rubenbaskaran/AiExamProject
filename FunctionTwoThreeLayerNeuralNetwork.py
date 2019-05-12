@@ -18,7 +18,7 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
-        self.epochs = 1000
+        self.epochs = 100
         self.input_size = 2
         self.hidden_size = 20
         self.output_size = 1
@@ -112,13 +112,12 @@ class NeuralNetwork(object):
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        X = x_values
-        Y = x_values
+        X = np.round(np.arange(-1, 1.05, 0.05), 3)
+        Y = np.round(np.arange(-1, 1.05, 0.05), 3)
         X, Y = np.meshgrid(X, Y)
-        # ax.plot_surface(x_values, y_values, np.array([z_values_predicted]))
-        Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
-        print(Z)
-        ax.plot_surface(X, Y, Z)
+        # Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
+        ax.plot_surface(X, Y, np.array(z_values_actual).reshape(41, 41))
+        ax.plot_surface(X, Y, np.array(z_values_predicted).reshape(41, 41))
         ax.set_title("Actual model vs. trained model (3 Layers)")
         ax.set_zlim(0, 1)
         plt.show()
@@ -140,7 +139,7 @@ class NeuralNetwork(object):
 
 print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
-# nn.create_dataset()
+nn.create_dataset()
 nn.create_network()
 nn.start_training()
 print("Ended at: " + str(dt.datetime.now()))
