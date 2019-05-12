@@ -4,6 +4,7 @@ import pandas as pd
 import datetime as dt
 from mpl_toolkits.mplot3d import Axes3D
 
+
 class NeuralNetwork(object):
 
     def __init__(self):
@@ -23,36 +24,24 @@ class NeuralNetwork(object):
         self.output_size = 1
 
     def create_dataset(self):
-        input = -1.0
-        nestedinput = -1.0
-        x_values = []
-        y_values = []
-        z_values = []
         file = open("FunctionTwoDataset.csv", "w")
         file.write("x_input,y_input,z_output\n")
         StringBuilder = ""
+        x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        z_values = []
 
-        while input <= 1:
-            while nestedinput <= 1:
-                x_values.append(input)
-                y_values.append(nestedinput)
-                output = round(np.exp(-(input ** 2 + nestedinput ** 2) / 0.1), 3)
+        for number in x_values:
+            for nestednumber in y_values:
+                output = round(np.exp(-(number ** 2 + nestednumber ** 2) / 0.1), 3)
                 z_values.append(output)
-                StringBuilder += str(input) + "," + str(nestedinput) + "," + str(output) + "\n"
-                nestedinput = round(nestedinput + 0.05, 3)
-            nestedinput = -1.0
-            input = round(input + 0.05, 3)
-
+                StringBuilder += str(number) + "," + str(nestednumber) + "," + str(output) + "\n"
         file.write(StringBuilder)
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        X = x_values
-        Y = y_values
-        X, Y = np.meshgrid(X, Y)
-        Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
-
-        ax.plot_surface(X, Y, Z)
+        x_values, y_values = np.meshgrid(x_values, y_values)
+        ax.plot_surface(x_values, y_values, np.array(z_values).reshape(41, 41))
         ax.set_zlim(0, 1)
         plt.show()
 
@@ -152,8 +141,8 @@ class NeuralNetwork(object):
 print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
 nn.create_dataset()
-nn.create_network()
-nn.start_training()
-print("Ended at: " + str(dt.datetime.now()))
-nn.plot_error()
-nn.test_network()
+# nn.create_network()
+# nn.start_training()
+# print("Ended at: " + str(dt.datetime.now()))
+# nn.plot_error()
+# nn.test_network()
