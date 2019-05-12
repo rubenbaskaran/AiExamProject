@@ -53,9 +53,8 @@ class NeuralNetwork(object):
         self.z_output = np.array(data_from_csv["z_output"])
 
         x_y_input_builder = []
-        for x_value in x_values:
-            for y_value in y_values:
-                x_y_input_builder.append([x_value, y_value])
+        for index in range(0, x_values.size):
+            x_y_input_builder.append([x_values[index], y_values[index]])
         self.x_y_input = np.array(x_y_input_builder)
 
         # Weights
@@ -141,9 +140,9 @@ class NeuralNetwork(object):
 
 print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
-nn.create_dataset()
-# nn.create_network()
-# nn.start_training()
-# print("Ended at: " + str(dt.datetime.now()))
-# nn.plot_error()
-# nn.test_network()
+# nn.create_dataset()
+nn.create_network()
+nn.start_training()
+print("Ended at: " + str(dt.datetime.now()))
+nn.plot_error()
+nn.test_network()
