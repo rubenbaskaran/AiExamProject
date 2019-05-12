@@ -31,11 +31,11 @@ class NeuralNetwork(object):
         y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         z_values = []
 
-        for number in x_values:
-            for nestednumber in y_values:
-                output = round(np.exp(-(number ** 2 + nestednumber ** 2) / 0.1), 3)
-                z_values.append(output)
-                StringBuilder += str(number) + "," + str(nestednumber) + "," + str(output) + "\n"
+        for x_value in x_values:
+            for y_value in y_values:
+                z_value = round(np.exp(-(x_value ** 2 + y_value ** 2) / 0.1), 3)
+                z_values.append(z_value)
+                StringBuilder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
         file.write(StringBuilder)
 
         fig = plt.figure()
@@ -48,13 +48,14 @@ class NeuralNetwork(object):
     def create_network(self):
         # Import data
         data_from_csv = pd.read_csv('FunctionTwoDataset.csv')
-        x_input = np.array(data_from_csv["input"])
-        self.z_output = np.array(data_from_csv["output"])
+        x_values = np.array(data_from_csv["x_input"])
+        y_values = np.array(data_from_csv["y_input"])
+        self.z_output = np.array(data_from_csv["z_output"])
 
         x_y_input_builder = []
-        for number in x_input:
-            for nestednumber in x_input:
-                x_y_input_builder.append([number, nestednumber])
+        for x_value in x_values:
+            for y_value in y_values:
+                x_y_input_builder.append([x_value, y_value])
         self.x_y_input = np.array(x_y_input_builder)
 
         # Weights
