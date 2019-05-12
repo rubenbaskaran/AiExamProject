@@ -15,10 +15,10 @@ class NeuralNetwork(object):
         self.z_output = None
         self.L2_output = None
         self.L3_output = None
-        self.error_x = []
-        self.error_y = []
+        self.error_x_y = []
+        self.error_z = []
         self.global_error = 0
-        self.counter = 0
+        self.counter = 1
         self.learning_rate = 0.5
         self.epochs = 10000
         self.input_size = 2
@@ -61,9 +61,9 @@ class NeuralNetwork(object):
         self.z_output = np.array(data_from_csv["output"])
 
         # Weights
-        self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (1x5) weight matrix from input to hidden layer
-        self.w2 = np.random.randn(self.first_hidden_size, self.second_hidden_size)  # (5x5) weight matrix from hidden to output layer
-        self.w3 = np.random.randn(self.second_hidden_size, self.output_size)        # (5x1) weight matrix from hidden to output layer
+        self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (2x20) between input and first hidden
+        self.w2 = np.random.randn(self.first_hidden_size, self.second_hidden_size)  # (20x20) between first hidden and second hidden
+        self.w3 = np.random.randn(self.second_hidden_size, self.output_size)        # (20x1) between second hidden and output
 
     def start_training(self):
         for i in range(self.epochs):
@@ -73,11 +73,11 @@ class NeuralNetwork(object):
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(self.x_y_input[index], expected_output, predicted_output)
-            self.error_x.append(i)
-            self.error_y.append(self.global_error / self.x_y_input.size)
+            self.error_x_y.append(i)
+            self.error_z.append(self.global_error / self.x_y_input.size)
             self.global_error = 0
-            self.counter += 1
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
+            self.counter += 1
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -134,7 +134,7 @@ class NeuralNetwork(object):
         return x * (1 - x)
 
     def plot_error(self):
-        plt.plot(self.error_x, self.error_y)
+        plt.plot(self.error_x_y, self.error_z)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
         plt.title("Mean squared error for each epoch (4 Layers)")
