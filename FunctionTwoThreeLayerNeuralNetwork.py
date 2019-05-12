@@ -20,7 +20,7 @@ class NeuralNetwork(object):
         self.learning_rate = 0.5
         self.epochs = 100
         self.input_size = 2
-        self.hidden_size = 20
+        self.hidden_size = 50
         self.output_size = 1
 
     def create_dataset(self):
@@ -99,25 +99,21 @@ class NeuralNetwork(object):
         self.w2 += np.dot(np.array([self.L2_output]).T, np.array([w2_delta])) * self.learning_rate
 
     def test_network(self):
-        x_values = []
-        y_values = []
         z_values_predicted = []
         z_values_actual = []
 
         for index in range(0, len(self.x_y_input)):
-            x_values.append(self.x_y_input[index][0])
-            y_values.append(self.x_y_input[index][1])
             z_values_predicted.append(self.forward_propagation(self.x_y_input[index])[0])
             z_values_actual.append(self.z_output[index])
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        X = np.round(np.arange(-1, 1.05, 0.05), 3)
-        Y = np.round(np.arange(-1, 1.05, 0.05), 3)
-        X, Y = np.meshgrid(X, Y)
+        x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        x_values, y_values = np.meshgrid(x_values, y_values)
 
-        ax.plot_surface(X, Y, np.array(z_values_actual).reshape(41, 41))
-        ax.plot_surface(X, Y, np.array(z_values_predicted).reshape(41, 41))
+        ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
+        ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
         ax.set_title("Actual model vs. trained model (3 Layers)")
         ax.set_zlim(0, 1)
         plt.show()
