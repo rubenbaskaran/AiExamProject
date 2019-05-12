@@ -33,7 +33,7 @@ class NeuralNetwork(object):
 
         for x_value in x_values:
             for y_value in y_values:
-                z_value = round(np.exp(-(x_value ** 2 + y_value ** 2) / 0.1), 3)
+                z_value = np.exp(-(x_value ** 2 + y_value ** 2) / 0.1)
                 z_values.append(z_value)
                 StringBuilder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
         file.write(StringBuilder)
@@ -108,14 +108,14 @@ class NeuralNetwork(object):
             x_values.append(self.x_y_input[index][0])
             y_values.append(self.x_y_input[index][1])
             z_values_predicted.append(self.forward_propagation(self.x_y_input[index])[0])
-            z_values_actual.append(self.sigmoid(self.z_output[index]))
+            z_values_actual.append(self.z_output[index])
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
         X = np.round(np.arange(-1, 1.05, 0.05), 3)
         Y = np.round(np.arange(-1, 1.05, 0.05), 3)
         X, Y = np.meshgrid(X, Y)
-        # Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
+
         ax.plot_surface(X, Y, np.array(z_values_actual).reshape(41, 41))
         ax.plot_surface(X, Y, np.array(z_values_predicted).reshape(41, 41))
         ax.set_title("Actual model vs. trained model (3 Layers)")
