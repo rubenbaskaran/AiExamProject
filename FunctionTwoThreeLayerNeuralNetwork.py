@@ -4,7 +4,6 @@ import pandas as pd
 import datetime as dt
 from mpl_toolkits.mplot3d import Axes3D
 
-
 class NeuralNetwork(object):
 
     def __init__(self):
@@ -54,23 +53,28 @@ class NeuralNetwork(object):
     def create_network(self):
         # Import data
         data_from_csv = pd.read_csv('FunctionTwoDataset.csv')
-        self.x_y_input = np.array(data_from_csv["input"])
+        x_input = np.array(data_from_csv["input"])
         self.z_output = np.array(data_from_csv["output"])
 
+        x_y_input_builder = []
+        for number in x_input:
+            x_y_input_builder.append([number, number])
+        self.x_y_input = np.array(x_y_input_builder)
+
         # Weights
-        self.w1 = np.random.randn(self.input_size, self.hidden_size)    # (2x20) between input and hidden
-        self.w2 = np.random.randn(self.hidden_size, self.output_size)   # (20x1) between hidden and output
+        self.w1 = np.random.randn(self.input_size, self.hidden_size)  # (2x20) between input and hidden
+        self.w2 = np.random.randn(self.hidden_size, self.output_size)  # (20x1) between hidden and output
 
     def start_training(self):
         for i in range(self.epochs):
-            for index in range(0, self.x_y_input.size):
+            for index in range(0, len(self.x_y_input)):
                 predicted_output = self.forward_propagation(self.x_y_input[index])
                 expected_output = self.sigmoid(self.z_output[index])
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(self.x_y_input[index], expected_output, predicted_output)
             self.error_x_y.append(i)
-            self.error_z.append(self.global_error / self.x_y_input.size)
+            self.error_z.append(self.global_error / len(self.x_y_input))
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
             self.counter += 1
@@ -79,7 +83,7 @@ class NeuralNetwork(object):
     def forward_propagation(self, input_value):
         self.L2_output = self.sigmoid(np.dot(input_value, self.w1))
         prediction = self.sigmoid(np.dot(self.L2_output, self.w2))
-        return prediction[0][0]
+        return prediction
 
     # back-propagate the error in order to train the network
     # Using partial derivative and chain-rule
@@ -95,15 +99,15 @@ class NeuralNetwork(object):
         w1_delta = L2_error * self.sigmoid_prime(self.L2_output)
 
         # Update weights
-        self.w1 += np.dot(input_value.T, w1_delta) * self.learning_rate
-        self.w2 += np.dot(self.L2_output.T, w2_delta) * self.learning_rate
+        self.w1 += np.dot(np.array([input_value]).T, np.array([w1_delta])) * self.learning_rate
+        self.w2 += np.dot(np.array([self.L2_output]).T, np.array([w2_delta])) * self.learning_rate
 
     def test_network(self):
         x_values = []
         y_values_predicted = []
         y_values_actual = []
 
-        for index in range(0, self.x_y_input.size):
+        for index in range(0, len(self.x_y_input)):
             x_values.append(self.x_y_input[index])
             y_values_predicted.append(self.forward_propagation(self.x_y_input[index]))
             y_values_actual.append(self.sigmoid(self.z_output[index]))
