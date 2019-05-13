@@ -120,7 +120,7 @@ class NeuralNetwork(object):
         plt.plot(self.error_x, self.error_y)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (3 Layers)")
+        plt.title("Mean squared error for each epoch (1 hidden layer)")
         plt.show()
 
 
