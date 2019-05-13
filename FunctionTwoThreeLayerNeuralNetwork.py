@@ -133,7 +133,7 @@ class NeuralNetwork(object):
 
 print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
-nn.create_dataset()
+# nn.create_dataset()
 nn.create_network()
 nn.start_training()
 print("Ended at: " + str(dt.datetime.now()))
