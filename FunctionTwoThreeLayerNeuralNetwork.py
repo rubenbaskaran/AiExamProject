@@ -10,6 +10,8 @@ class NeuralNetwork(object):
     def __init__(self):
         self.w1 = None
         self.w2 = None
+        self.x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None
         self.L2_output = None
@@ -18,7 +20,7 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 1
-        self.epochs = 10000
+        self.epochs = 1000
         self.input_size = 2
         self.hidden_size = 100
         self.output_size = 1
@@ -27,12 +29,10 @@ class NeuralNetwork(object):
         file = open("FunctionTwoDataset.csv", "w")
         file.write("x_input,y_input,z_output\n")
         StringBuilder = ""
-        x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
-        y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         z_values = []
 
-        for x_value in x_values:
-            for y_value in y_values:
+        for x_value in self.x_values:
+            for y_value in self.y_values:
                 z_value = np.exp(-(x_value ** 2 + y_value ** 2) / 0.1)
                 z_values.append(z_value)
                 StringBuilder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
@@ -40,8 +40,9 @@ class NeuralNetwork(object):
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        x_values, y_values = np.meshgrid(x_values, y_values)
+        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
         ax.plot_surface(x_values, y_values, np.array(z_values).reshape(41, 41))
+        ax.set_title("Actual model")
         ax.set_zlim(0, 1)
         plt.show()
 
@@ -58,8 +59,8 @@ class NeuralNetwork(object):
         self.x_y_input = np.array(x_y_input_builder)
 
         # Weights
-        self.w1 = np.random.randn(self.input_size, self.hidden_size)  # (2x20) between input and hidden
-        self.w2 = np.random.randn(self.hidden_size, self.output_size)  # (20x1) between hidden and output
+        self.w1 = np.random.randn(self.input_size, self.hidden_size)    # (2x20) between input and hidden
+        self.w2 = np.random.randn(self.hidden_size, self.output_size)   # (20x1) between hidden and output
 
     def start_training(self):
         for i in range(self.epochs):
@@ -108,10 +109,7 @@ class NeuralNetwork(object):
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
-        y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
-        x_values, y_values = np.meshgrid(x_values, y_values)
-
+        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
         ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
         ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
         ax.set_title("Actual model vs. trained model (3 Layers)")
