@@ -113,9 +113,11 @@ class NeuralNetwork(object):
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        axes.plot(x_values, y_values_predicted)
         axes.plot(x_values, y_values_actual)
-        axes.set_title("Actual model vs. trained model (4 Layers)")
+        axes.plot(x_values, y_values_predicted)
+        plt.xlabel("x-values")
+        plt.ylabel("y-values")
+        axes.set_title("Actual model vs. trained model (2 hidden layers)")
         plt.show()
 
     def sigmoid(self, x):

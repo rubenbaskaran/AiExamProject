@@ -18,9 +18,9 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 10000
+        self.epochs = 1000
         self.input_size = 1
-        self.hidden_size = 20
+        self.hidden_size = 10
         self.output_size = 1
 
     def create_dataset(self):
@@ -102,9 +102,11 @@ class NeuralNetwork(object):
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        axes.plot(x_values, y_values_predicted)
         axes.plot(x_values, y_values_actual)
-        axes.set_title("Actual model vs. trained model (3 Layers)")
+        axes.plot(x_values, y_values_predicted)
+        plt.xlabel("x-values")
+        plt.ylabel("y-values")
+        axes.set_title("Actual model vs. trained model (1 hidden layer)")
         plt.show()
 
     def sigmoid(self, x):
