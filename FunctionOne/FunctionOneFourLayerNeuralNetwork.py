@@ -135,10 +135,11 @@ class NeuralNetwork(object):
         plt.show()
 
 
-print("Started at: " + str(dt.datetime.now()))
+start = str(dt.datetime.now())
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
+print("Started at: " + start)
 print("Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()

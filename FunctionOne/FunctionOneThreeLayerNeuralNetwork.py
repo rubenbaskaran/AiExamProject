@@ -18,9 +18,9 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 1000
+        self.epochs = 100000
         self.input_size = 1
-        self.hidden_size = 10
+        self.hidden_size = 100
         self.output_size = 1
 
     def create_dataset(self):
@@ -124,10 +124,11 @@ class NeuralNetwork(object):
         plt.show()
 
 
-print("Started at: " + str(dt.datetime.now()))
+start = str(dt.datetime.now())
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
+print("Started at: " + start)
 print("Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()
