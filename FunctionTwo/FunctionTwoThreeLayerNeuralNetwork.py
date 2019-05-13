@@ -19,7 +19,7 @@ class NeuralNetwork(object):
         self.error_z = []
         self.global_error = 0
         self.counter = 1
-        self.learning_rate = 1
+        self.learning_rate = 0.5
         self.epochs = 1000
         self.input_size = 2
         self.hidden_size = 100
