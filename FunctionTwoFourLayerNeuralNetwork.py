@@ -11,6 +11,8 @@ class NeuralNetwork(object):
         self.w1 = None
         self.w2 = None
         self.w3 = None
+        self.x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None
         self.L2_output = None
@@ -19,55 +21,54 @@ class NeuralNetwork(object):
         self.error_z = []
         self.global_error = 0
         self.counter = 1
-        self.learning_rate = 0.5
-        self.epochs = 10000
+        self.learning_rate = 1
+        self.epochs = 1000
         self.input_size = 2
-        self.first_hidden_size = 20
-        self.second_hidden_size = 20
+        self.first_hidden_size = 100
+        self.second_hidden_size = 100
         self.output_size = 1
 
     def create_dataset(self):
-        input = -1.0
-        x_y_values = []
-        z_values = []
         file = open("FunctionTwoDataset.csv", "w")
-        file.write("input,output\n")
-        StringBuilder = ""
+        file.write("x_input,y_input,z_output\n")
+        string_builder = ""
+        z_values = []
 
-        while input <= 1:
-            x_y_values.append(input)
-            output = round(np.exp(-(input ** 2 + input ** 2) / 0.1), 3)
-            z_values.append(output)
-            StringBuilder += str(input) + "," + str(output) + "\n"
-            input = round(input + 0.05, 3)
-
-        file.write(StringBuilder)
+        for x_value in self.x_values:
+            for y_value in self.y_values:
+                z_value = np.exp(-(x_value ** 2 + y_value ** 2) / 0.1)
+                z_values.append(z_value)
+                string_builder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
+        file.write(string_builder)
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        X = x_y_values
-        Y = x_y_values
-        X, Y = np.meshgrid(X, Y)
-        Z = np.exp(-(X ** 2 + Y ** 2) / 0.1)
-
-        ax.plot_surface(X, Y, Z)
+        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
+        ax.plot_surface(x_values, y_values, np.array(z_values).reshape(41, 41))
+        ax.set_title("Actual model")
         ax.set_zlim(0, 1)
         plt.show()
 
     def create_network(self):
         # Import data
         data_from_csv = pd.read_csv('FunctionTwoDataset.csv')
-        self.x_y_input = np.array(data_from_csv["input"])
-        self.z_output = np.array(data_from_csv["output"])
+        x_values = np.array(data_from_csv["x_input"])
+        y_values = np.array(data_from_csv["y_input"])
+        self.z_output = np.array(data_from_csv["z_output"])
+
+        x_y_input_builder = []
+        for index in range(0, x_values.size):
+            x_y_input_builder.append([x_values[index], y_values[index]])
+        self.x_y_input = np.array(x_y_input_builder)
 
         # Weights
-        self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (2x20) between input and first hidden
-        self.w2 = np.random.randn(self.first_hidden_size, self.second_hidden_size)  # (20x20) between first hidden and second hidden
-        self.w3 = np.random.randn(self.second_hidden_size, self.output_size)        # (20x1) between second hidden and output
+        self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (2x100) between input and first hidden
+        self.w2 = np.random.randn(self.first_hidden_size, self.second_hidden_size)  # (100x100) between first hidden and second hidden
+        self.w3 = np.random.randn(self.second_hidden_size, self.output_size)        # (100x1) between second hidden and output
 
     def start_training(self):
         for i in range(self.epochs):
-            for index in range(0, self.x_y_input.size):
+            for index in range(0, len(self.x_y_input)):
                 predicted_output = self.forward_propagation(self.x_y_input[index])
                 expected_output = self.sigmoid(self.z_output[index])
                 error = (expected_output - predicted_output) ** 2
@@ -84,7 +85,7 @@ class NeuralNetwork(object):
         self.L2_output = self.sigmoid(np.dot(input_value, self.w1))
         self.L3_output = self.sigmoid(np.dot(self.L2_output, self.w2))
         prediction = self.sigmoid(np.dot(self.L3_output, self.w3))
-        return prediction[0][0]
+        return prediction
 
     # back-propagate the error in order to train the network
     # Using partial derivative and chain-rule
@@ -105,25 +106,25 @@ class NeuralNetwork(object):
         w1_delta = L2_error * self.sigmoid_prime(self.L2_output)
 
         # Update weights
-        self.w1 += np.dot(input_value.T, w1_delta) * self.learning_rate
-        self.w2 += np.dot(self.L2_output.T, w2_delta) * self.learning_rate
-        self.w3 += np.dot(self.L3_output.T, w3_delta) * self.learning_rate
+        self.w1 += np.dot(np.array([input_value]).T, np.array([w1_delta])) * self.learning_rate
+        self.w2 += np.dot(np.array([self.L2_output]).T, np.array([w2_delta])) * self.learning_rate
+        self.w3 += np.dot(np.array([self.L3_output]).T, np.array([w3_delta])) * self.learning_rate
 
     def test_network(self):
-        x_values = []
-        y_values_predicted = []
-        y_values_actual = []
+        z_values_predicted = []
+        z_values_actual = []
 
-        for index in range(0, self.x_y_input.size):
-            x_values.append(self.x_y_input[index])
-            y_values_predicted.append(self.forward_propagation(self.x_y_input[index]))
-            y_values_actual.append(self.sigmoid(self.z_output[index]))
+        for index in range(0, len(self.x_y_input)):
+            z_values_predicted.append(self.forward_propagation(self.x_y_input[index])[0])
+            z_values_actual.append(self.z_output[index])
 
-        figure = plt.figure()
-        axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        axes.plot(x_values, y_values_predicted)
-        axes.plot(x_values, y_values_actual)
-        axes.set_title("Actual model vs. trained model (4 Layers)")
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
+        ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
+        ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
+        ax.set_title("Actual model vs. trained model (3 Layers)")
+        ax.set_zlim(0, 1)
         plt.show()
 
     def sigmoid(self, x):
@@ -143,9 +144,9 @@ class NeuralNetwork(object):
 
 print("Started at: " + str(dt.datetime.now()))
 nn = NeuralNetwork()
+# nn.create_dataset()
 nn.create_network()
 nn.start_training()
 print("Ended at: " + str(dt.datetime.now()))
 nn.plot_error()
 nn.test_network()
-
