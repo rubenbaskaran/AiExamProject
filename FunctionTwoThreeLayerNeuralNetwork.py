@@ -28,15 +28,15 @@ class NeuralNetwork(object):
     def create_dataset(self):
         file = open("FunctionTwoDataset.csv", "w")
         file.write("x_input,y_input,z_output\n")
-        StringBuilder = ""
+        string_builder = ""
         z_values = []
 
         for x_value in self.x_values:
             for y_value in self.y_values:
                 z_value = np.exp(-(x_value ** 2 + y_value ** 2) / 0.1)
                 z_values.append(z_value)
-                StringBuilder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
-        file.write(StringBuilder)
+                string_builder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
+        file.write(string_builder)
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
@@ -88,7 +88,7 @@ class NeuralNetwork(object):
         # Figure out how much W2 contributed to output error
         # And how much to change W2
         L3_error = expected_output - predicted_output
-        w2_delta = (L3_error * self.sigmoid_prime(predicted_output))
+        w2_delta = L3_error * self.sigmoid_prime(predicted_output)
 
         # Figure out how much W1 contributed to output error
         # And how much to change W1
