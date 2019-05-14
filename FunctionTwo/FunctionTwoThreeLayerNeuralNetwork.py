@@ -112,7 +112,7 @@ class NeuralNetwork(object):
         x_values, y_values = np.meshgrid(self.x_values, self.y_values)
         ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
         ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
-        ax.set_title("Actual model vs. trained model (3 Layers)")
+        ax.set_title("Actual model vs. trained model (1 hidden layer)")
         plt.xlabel("x-values")
         plt.ylabel("y-values")
         ax.set_zlim(0, 1)
@@ -129,7 +129,7 @@ class NeuralNetwork(object):
         plt.plot(self.error_x_y, self.error_z)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (3 Layers)")
+        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nFinal MSE: " + str(self.error_z.__getitem__(len(self.error_z)-1)[0]))
         plt.show()
 
 
