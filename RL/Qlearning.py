@@ -2,9 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import hsv_to_rgb
-import GridWorld
-
-
+from RL import GridWorld
 
 UP = 0
 DOWN = 1
