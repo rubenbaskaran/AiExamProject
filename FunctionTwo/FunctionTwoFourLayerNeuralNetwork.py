@@ -124,6 +124,8 @@ class NeuralNetwork(object):
         ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
         ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
         ax.set_title("Actual model vs. trained model (3 Layers)")
+        plt.xlabel("x-values")
+        plt.ylabel("y-values")
         ax.set_zlim(0, 1)
         plt.show()
 
