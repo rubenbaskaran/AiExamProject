@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import datetime as dt
+import matplotlib.patches as mpatches
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -121,9 +122,14 @@ class NeuralNetwork(object):
         fig = plt.figure()
         ax = fig.gca(projection='3d')
         x_values, y_values = np.meshgrid(self.x_values, self.y_values)
-        ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41))
-        ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41))
-        ax.set_title("Actual model vs. trained model (2 hidden layers)")
+        ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41), color="royalblue")
+        ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41), color="orange")
+
+        col1_patch = mpatches.Patch(color="royalblue", label='Actual')
+        col2_patch = mpatches.Patch(color="orange", label='Predicted')
+        plt.legend(handles=[col1_patch, col2_patch], loc=(0.0, 0.7))
+
+        ax.set_title("Actual model vs. trained model (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
         plt.xlabel("x-values")
         plt.ylabel("y-values")
         ax.set_zlim(0, 1)
@@ -140,9 +146,9 @@ class NeuralNetwork(object):
         plt.plot(self.error_x_y, self.error_z)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z)-1)[0]))
+        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
         plt.show()
-        print("MSE: " + str(self.error_z.__getitem__(len(self.error_z)-1)[0]))
+        print("MSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
 
 
 start = str(dt.datetime.now())
