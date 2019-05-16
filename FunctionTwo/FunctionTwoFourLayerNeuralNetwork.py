@@ -35,10 +35,10 @@ class NeuralNetwork(object):
 
         self.create_network()
         self.start_training()
-        self.add_to_statistics(hidden_size, epochs, self.mse, self.execution_time, csv_writer)
+        self.add_to_statistics(csv_writer)
 
-    def add_to_statistics(self, neurons, epochs, execution_time, mse, csv_writer):
-        csv_writer.write("\n" + str(neurons) + "," + str(epochs) + "," + str(execution_time) + "," + str(mse))
+    def add_to_statistics(self, csv_writer):
+        csv_writer.write("\n" + str(self.hidden_size) + "," + str(self.epochs) + "," + str(self.execution_time) + "," + str(self.mse))
 
     def create_dataset(self):
         my_path = os.path.abspath(os.path.dirname(__file__))
