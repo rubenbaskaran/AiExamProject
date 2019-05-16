@@ -18,9 +18,9 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 100000
+        self.epochs = 1000
         self.input_size = 1
-        self.hidden_size = 100
+        self.hidden_size = 10
         self.output_size = 1
 
     def create_dataset(self):
@@ -120,8 +120,9 @@ class NeuralNetwork(object):
         plt.plot(self.error_x, self.error_y)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nFinal MSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)[0]))
+        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
         plt.show()
+        print("MSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
 
 
 start = str(dt.datetime.now())
