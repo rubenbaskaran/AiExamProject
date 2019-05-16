@@ -89,7 +89,7 @@ class NeuralNetwork(object):
             self.error_x_y.append(i)
             self.error_z.append(self.global_error / len(self.x_y_input))
             self.global_error = 0
-            print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
+            print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionTwoSingleHidden)")
             self.counter += 1
         self.mse = self.error_z.__getitem__(len(self.error_z) - 1)[0]
         self.execution_time = dt.datetime.now() - self.timestamp_start

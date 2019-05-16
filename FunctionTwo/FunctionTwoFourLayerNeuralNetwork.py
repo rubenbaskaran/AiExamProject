@@ -3,12 +3,13 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 import matplotlib.patches as mpatches
+import os.path
 from mpl_toolkits.mplot3d import Axes3D
 
 
 class NeuralNetwork(object):
 
-    def __init__(self):
+    def __init__(self, epochs, hidden_size, csv_writer):
         self.w1 = None
         self.w2 = None
         self.w3 = None
@@ -23,14 +24,26 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
-        self.epochs = 100
+        self.epochs = epochs
         self.input_size = 2
-        self.first_hidden_size = 10
-        self.second_hidden_size = 10
+        self.first_hidden_size = hidden_size
+        self.second_hidden_size = hidden_size
         self.output_size = 1
+        self.timestamp_start = dt.datetime.now()
+        self.execution_time = None
+        self.mse = None
+
+        self.create_network()
+        self.start_training()
+        self.add_to_statistics(hidden_size, epochs, self.mse, self.execution_time, csv_writer)
+
+    def add_to_statistics(self, neurons, epochs, execution_time, mse, csv_writer):
+        csv_writer.write("\n" + str(neurons) + "," + str(epochs) + "," + str(execution_time) + "," + str(mse))
 
     def create_dataset(self):
-        file = open("FunctionTwoDataset.csv", "w")
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "FunctionTwoDataset.csv")
+        file = open(path, "w")
         file.write("x_input,y_input,z_output\n")
         string_builder = ""
         z_values = []
@@ -52,7 +65,9 @@ class NeuralNetwork(object):
 
     def create_network(self):
         # Import data
-        data_from_csv = pd.read_csv('FunctionTwoDataset.csv')
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "FunctionTwoDataset.csv")
+        data_from_csv = pd.read_csv(path)
         x_values = np.array(data_from_csv["x_input"])
         y_values = np.array(data_from_csv["y_input"])
         self.z_output = np.array(data_from_csv["z_output"])
@@ -78,9 +93,10 @@ class NeuralNetwork(object):
             self.error_x_y.append(i)
             self.error_z.append(self.global_error / self.x_y_input.size)
             self.global_error = 0
-            print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
+            print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionTwoMultiHidden)")
             self.counter += 1
-        print("MSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        self.mse = self.error_z.__getitem__(len(self.error_z) - 1)[0]
+        self.execution_time = dt.datetime.now() - self.timestamp_start
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -112,6 +128,13 @@ class NeuralNetwork(object):
         self.w2 += np.dot(np.array([self.L2_output]).T, np.array([w2_delta])) * self.learning_rate
         self.w3 += np.dot(np.array([self.L3_output]).T, np.array([w3_delta])) * self.learning_rate
 
+    def plot_error(self):
+        plt.plot(self.error_x_y, self.error_z)
+        plt.xlabel("Epoch")
+        plt.ylabel("Mean squared error")
+        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        plt.show()
+
     def test_network(self):
         z_values_predicted = []
         z_values_actual = []
@@ -142,20 +165,3 @@ class NeuralNetwork(object):
     # Given an output value from a neuron, we want to calculate it’s slope
     def sigmoid_prime(self, x):
         return x * (1 - x)
-
-    def plot_error(self):
-        plt.plot(self.error_x_y, self.error_z)
-        plt.xlabel("Epoch")
-        plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
-        plt.show()
-
-
-start = dt.datetime.now()
-nn = NeuralNetwork()
-nn.create_network()
-nn.start_training()
-stop = dt.datetime.now()
-print("Execution time: " + str(stop-start))
-nn.plot_error()
-nn.test_network()
