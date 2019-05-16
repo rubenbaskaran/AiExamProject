@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import datetime as dt
+import os.path
 
 
 class NeuralNetwork(object):
 
-    def __init__(self):
+    def __init__(self, epochs, hidden_size, csv_writer):
         self.w1 = None
         self.w2 = None
         self.x_input = None
@@ -18,16 +19,28 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 0
         self.learning_rate = 0.5
-        self.epochs = 100
+        self.epochs = epochs
         self.input_size = 1
-        self.hidden_size = 10
+        self.hidden_size = hidden_size
         self.output_size = 1
+        self.timestamp_start = dt.datetime.now()
+        self.execution_time = None
+        self.mse = None
+
+        self.create_network()
+        self.start_training()
+        self.add_to_statistics(hidden_size, epochs, self.mse, self.execution_time, csv_writer)
+
+    def add_to_statistics(self, neurons, epochs, execution_time, mse, csv_writer):
+        csv_writer.write("\n" + str(neurons) + "," + str(epochs) + "," + str(execution_time) + "," + str(mse))
 
     def create_dataset(self):
         input = -1.0
         x_list = []
         y_list = []
-        f = open("FunctionOneDataset.csv", "w")
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "FunctionOneDataset.csv")
+        f = open(path, "w")
         f.write("input,output\n")
         StringBuilder = ""
 
@@ -45,13 +58,15 @@ class NeuralNetwork(object):
 
     def create_network(self):
         # Import data
-        data_from_csv = pd.read_csv('FunctionOneDataset.csv')
-        self.x_input = np.array(data_from_csv["input"])  # ~~~~ Maybe need scaling? ~~~~
-        self.y_input = np.array(data_from_csv["output"])  # ~~~~ Maybe need scaling? ~~~~
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "FunctionOneDataset.csv")
+        data_from_csv = pd.read_csv(path)
+        self.x_input = np.array(data_from_csv["input"])
+        self.y_input = np.array(data_from_csv["output"])
 
         # Weights
-        self.w1 = np.random.randn(self.input_size, self.hidden_size)  # (1x3) weight matrix from input to hidden layer
-        self.w2 = np.random.randn(self.hidden_size, self.output_size)  # (3x1) weight matrix from hidden to output layer
+        self.w1 = np.random.randn(self.input_size, self.hidden_size)    # (1x3) weight matrix from input to hidden layer
+        self.w2 = np.random.randn(self.hidden_size, self.output_size)   # (3x1) weight matrix from hidden to output layer
 
     def start_training(self):
         for i in range(self.epochs):
@@ -66,7 +81,8 @@ class NeuralNetwork(object):
             self.global_error = 0
             self.counter += 1
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
-        print("MSE: " + str(self.error_y.__getitem__(len(self.error_y) - 1)))
+        self.mse = self.error_y.__getitem__(len(self.error_y) - 1)
+        self.execution_time = dt.datetime.now() - self.timestamp_start
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -90,6 +106,13 @@ class NeuralNetwork(object):
         # Update weights
         self.w1 += np.dot(input_value.T, w1_delta) * self.learning_rate
         self.w2 += np.dot(self.L2_output.T, w2_delta) * self.learning_rate
+
+    def plot_error(self):
+        plt.plot(self.error_x, self.error_y)
+        plt.xlabel("Epoch")
+        plt.ylabel("Mean squared error")
+        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
+        plt.show()
 
     def test_network(self):
         x_values = []
@@ -117,20 +140,3 @@ class NeuralNetwork(object):
     # Given an output value from a neuron, we want to calculate it’s slope
     def sigmoid_prime(self, x):
         return x * (1 - x)
-
-    def plot_error(self):
-        plt.plot(self.error_x, self.error_y)
-        plt.xlabel("Epoch")
-        plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
-        plt.show()
-
-
-start = dt.datetime.now()
-nn = NeuralNetwork()
-nn.create_network()
-nn.start_training()
-stop = dt.datetime.now()
-print("Execution time: " + str(stop-start))
-nn.plot_error()
-nn.test_network()
