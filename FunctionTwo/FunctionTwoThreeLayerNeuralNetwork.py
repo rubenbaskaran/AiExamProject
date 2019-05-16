@@ -21,7 +21,7 @@ class NeuralNetwork(object):
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
-        self.epochs = 1000
+        self.epochs = 100
         self.input_size = 2
         self.hidden_size = 10
         self.output_size = 1
@@ -76,6 +76,7 @@ class NeuralNetwork(object):
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs))
             self.counter += 1
+        print("MSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -137,14 +138,13 @@ class NeuralNetwork(object):
         plt.ylabel("Mean squared error")
         plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
         plt.show()
-        print("MSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
 
 
-start = str(dt.datetime.now())
+start = dt.datetime.now()
 nn = NeuralNetwork()
 nn.create_network()
 nn.start_training()
-print("Started at: " + start)
-print("Ended at: " + str(dt.datetime.now()))
+stop = dt.datetime.now()
+print("Execution time: " + str(stop-start))
 nn.plot_error()
 nn.test_network()
