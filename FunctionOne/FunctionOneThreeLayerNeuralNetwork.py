@@ -40,8 +40,8 @@ class NeuralNetwork(object):
         y_list = []
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "FunctionOneDataset.csv")
-        f = open(path, "w")
-        f.write("input,output\n")
+        file = open(path, "w")
+        file.write("input,output\n")
         StringBuilder = ""
 
         while input <= 1:
@@ -51,7 +51,7 @@ class NeuralNetwork(object):
             StringBuilder = StringBuilder + str(input) + "," + str(output) + "\n"
             input = round(input + 0.002, 3)
 
-        f.write(StringBuilder)
+        file.write(StringBuilder)
         plt.plot(x_list, y_list)
         plt.axis([-1, 1, -2, 2])
         plt.show()
