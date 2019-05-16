@@ -35,7 +35,7 @@ class NeuralNetwork(object):
         self.add_to_statistics(csv_writer)
 
     def add_to_statistics(self, csv_writer):
-        csv_writer.write("\n" + str(self.hidden_size) + "," + str(self.epochs) + "," + str(self.execution_time) + "," + str(self.mse))
+        csv_writer.write("\n" + str(self.first_hidden_size) + "," + str(self.epochs) + "," + str(self.execution_time) + "," + str(self.mse))
 
     def create_dataset(self):
         input = -1.0
