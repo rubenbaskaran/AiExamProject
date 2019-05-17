@@ -76,7 +76,7 @@ class NeuralNetwork(object):
         for i in range(self.epochs):
             for index in range(0, self.x_input.size):
                 predicted_output = self.forward_propagation(self.x_input[index])
-                expected_output = self.sigmoid(self.y_input[index])
+                expected_output = self.y_input[index]
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(self.x_input[index], expected_output, predicted_output)
@@ -92,7 +92,7 @@ class NeuralNetwork(object):
     def forward_propagation(self, input_value):
         self.L2_output = self.sigmoid(np.dot(input_value, self.w1))
         self.L3_output = self.sigmoid(np.dot(self.L2_output, self.w2))
-        prediction = self.sigmoid(np.dot(self.L3_output, self.w3))
+        prediction = np.dot(self.L3_output, self.w3)
         return prediction[0][0]
 
     # back-propagate the error in order to train the network
@@ -101,7 +101,7 @@ class NeuralNetwork(object):
         # Figure out how much W3 contributed to output error
         # And how much to change W3
         L4_error = expected_output - predicted_output
-        w3_delta = L4_error * self.sigmoid_prime(predicted_output)
+        w3_delta = L4_error * self.sigmoid_prime(self.sigmoid(predicted_output))
 
         # Figure out how much W2 contributed to output error
         # And how much to change W2
@@ -133,7 +133,7 @@ class NeuralNetwork(object):
         for index in range(0, self.x_input.size):
             x_values.append(self.x_input[index])
             y_values_predicted.append(self.forward_propagation(self.x_input[index]))
-            y_values_actual.append(self.sigmoid(self.y_input[index]))
+            y_values_actual.append(self.y_input[index])
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
