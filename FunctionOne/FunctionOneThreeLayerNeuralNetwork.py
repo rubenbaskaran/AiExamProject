@@ -40,27 +40,25 @@ class NeuralNetwork(object):
         input_values = np.round(np.arange(-1, 1.002, 0.002), 3)
         x_list = []
         y_list = []
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionOneDataset.csv")
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "FunctionOneDataset.csv")
         file = open(path, "w")
         file.write("input,output\n")
-        StringBuilder = ""
+        string_builder = ""
 
         for input_value in input_values:
             x_list.append(input_value)
-            output = round(math.sin(2 * math.pi * input_value) + math.sin(5 * math.pi * input_value), 3)
+            output = np.round(math.sin(2 * math.pi * input_value) + math.sin(5 * math.pi * input_value), 3)
             y_list.append(output)
-            StringBuilder = StringBuilder + str(input_value) + "," + str(output) + "\n"
+            string_builder += str(input_value) + "," + str(output) + "\n"
 
-        file.write(StringBuilder)
+        file.write(string_builder)
         plt.plot(x_list, y_list)
         plt.axis([-1, 1, -2, 2])
         plt.show()
 
     def create_network(self):
         # Import data
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionOneDataset.csv")  # TODO: Import to training & test variable
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "FunctionOneDataset.csv")
         data_from_csv = pd.read_csv(path)
         self.x_input = np.round(np.array(data_from_csv["input"]), 3)
         self.y_output = np.round(np.array(data_from_csv["output"]), 3)
