@@ -11,6 +11,8 @@ class NeuralNetwork(object):
     def __init__(self, epochs, hidden_size, csv_writer):
         self.w1 = None
         self.w2 = None
+        self.train_data = None
+        self.test_data = None
         self.x_input = None
         self.y_output = None
         self.L2_output = None
@@ -60,8 +62,15 @@ class NeuralNetwork(object):
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "FunctionOneDataset.csv")  # TODO: Import to training & test variable
         data_from_csv = pd.read_csv(path)
-        self.x_input = np.array(data_from_csv["input"])
-        self.y_output = np.array(data_from_csv["output"])
+        self.x_input = np.round(np.array(data_from_csv["input"]), 3)
+        self.y_output = np.round(np.array(data_from_csv["output"]), 3)
+
+        x_y_dataset_builder = []
+        for index in range(0, self.x_input.size):
+            x_y_dataset_builder.append([self.x_input[index], self.y_output[index]])
+        np.random.shuffle(x_y_dataset_builder)
+        self.train_data = x_y_dataset_builder[:700]
+        self.test_data = x_y_dataset_builder[700:]
 
         # Weights
         self.w1 = np.random.randn(self.input_size, self.hidden_size)    # (1x3) weight matrix from input to hidden layer

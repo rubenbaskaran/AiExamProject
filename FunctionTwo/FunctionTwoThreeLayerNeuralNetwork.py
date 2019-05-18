@@ -12,6 +12,8 @@ class NeuralNetwork(object):
     def __init__(self, epochs, hidden_size, csv_writer):
         self.w1 = None
         self.w2 = None
+        self.train_data = None
+        self.test_data = None
         self.x_values = self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None

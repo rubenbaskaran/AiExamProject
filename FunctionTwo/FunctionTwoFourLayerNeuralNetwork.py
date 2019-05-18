@@ -13,6 +13,8 @@ class NeuralNetwork(object):
         self.w1 = None
         self.w2 = None
         self.w3 = None
+        self.train_data = None
+        self.test_data = None
         self.x_values = self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None
