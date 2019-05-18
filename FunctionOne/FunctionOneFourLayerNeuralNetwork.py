@@ -13,7 +13,7 @@ class NeuralNetwork(object):
         self.w2 = None
         self.w3 = None
         self.x_input = None
-        self.y_input = None
+        self.y_output = None
         self.L2_output = None
         self.L3_output = None
         self.error_x = []
@@ -64,7 +64,7 @@ class NeuralNetwork(object):
         path = os.path.join(my_path, "FunctionOneDataset.csv")  # TODO: Import to training & test variable
         data_from_csv = pd.read_csv(path)
         self.x_input = np.array(data_from_csv["input"])
-        self.y_input = np.array(data_from_csv["output"])
+        self.y_output = np.array(data_from_csv["output"])
 
         # Weights
         self.w1 = np.random.randn(self.input_size, self.first_hidden_size)          # (1x5) weight matrix from input to hidden layer
@@ -75,7 +75,7 @@ class NeuralNetwork(object):
         for i in range(self.epochs):
             for index in range(0, self.x_input.size):
                 predicted_output = self.forward_propagation(self.x_input[index])
-                expected_output = self.y_input[index]
+                expected_output = self.y_output[index]
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(self.x_input[index], expected_output, predicted_output)
@@ -132,7 +132,7 @@ class NeuralNetwork(object):
         for index in range(0, self.x_input.size):
             x_values.append(self.x_input[index])
             y_values_predicted.append(self.forward_propagation(self.x_input[index]))
-            y_values_actual.append(self.y_input[index])
+            y_values_actual.append(self.y_output[index])
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
