@@ -38,23 +38,22 @@ class NeuralNetwork(object):
         csv_writer.write("\n" + str(self.first_hidden_size) + "," + str(self.epochs) + "," + str(self.execution_time) + "," + str(self.mse))
 
     def create_dataset(self):
-        input = -1.0
+        input_values = np.round(np.arange(-1, 1.002, 0.002), 3)
         x_list = []
         y_list = []
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "FunctionOneDataset.csv")
-        f = open(path, "w")
-        f.write("input,output\n")
+        file = open(path, "w")
+        file.write("input,output\n")
         StringBuilder = ""
 
-        while input <= 1:
-            x_list.append(input)
-            output = round(math.sin(2 * math.pi * input) + math.sin(5 * math.pi * input), 3)
+        for input_value in input_values:
+            x_list.append(input_value)
+            output = round(math.sin(2 * math.pi * input_value) + math.sin(5 * math.pi * input_value), 3)
             y_list.append(output)
-            StringBuilder = StringBuilder + str(input) + "," + str(output) + "\n"
-            input = round(input + 0.002, 3)
+            StringBuilder = StringBuilder + str(input_value) + "," + str(output) + "\n"
 
-        f.write(StringBuilder)
+        file.write(StringBuilder)
         plt.plot(x_list, y_list)
         plt.axis([-1, 1, -2, 2])
         plt.show()
@@ -62,7 +61,7 @@ class NeuralNetwork(object):
     def create_network(self):
         # Import data
         my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionOneDataset.csv")
+        path = os.path.join(my_path, "FunctionOneDataset.csv")  # TODO: Import to training & test variable
         data_from_csv = pd.read_csv(path)
         self.x_input = np.array(data_from_csv["input"])
         self.y_input = np.array(data_from_csv["output"])

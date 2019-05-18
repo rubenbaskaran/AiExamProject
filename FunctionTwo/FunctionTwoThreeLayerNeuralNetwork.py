@@ -12,8 +12,7 @@ class NeuralNetwork(object):
     def __init__(self, epochs, hidden_size, csv_writer):
         self.w1 = None
         self.w2 = None
-        self.x_values = np.round(np.arange(-1, 1.05, 0.05), 3)
-        self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
+        self.x_values = self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None
         self.L2_output = None
@@ -63,7 +62,7 @@ class NeuralNetwork(object):
     def create_network(self):
         # Import data
         my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionTwoDataset.csv")
+        path = os.path.join(my_path, "FunctionTwoDataset.csv")  # TODO: Import to training & test variable
         data_from_csv = pd.read_csv(path)
         x_values = np.array(data_from_csv["x_input"])
         y_values = np.array(data_from_csv["y_input"])
