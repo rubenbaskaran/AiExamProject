@@ -29,6 +29,7 @@ class NeuralNetwork(object):
         self.execution_time = None
         self.mse = None
 
+        # self.create_dataset()
         self.create_network()
         self.start_training()
         self.add_to_statistics(csv_writer)
