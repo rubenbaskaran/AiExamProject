@@ -78,14 +78,14 @@ class NeuralNetwork(object):
 
     def start_training(self):
         for i in range(self.epochs):
-            for index in range(0, self.x_input.size):
-                predicted_output = self.forward_propagation(self.x_input[index])
-                expected_output = self.y_output[index]
-                error = (expected_output - predicted_output) ** 2  # ~~~~ Maybe modify this line ~~~~
+            for x_y_data in self.train_data:
+                predicted_output = self.forward_propagation(x_y_data[0])
+                expected_output = x_y_data[1]
+                error = (expected_output - predicted_output) ** 2
                 self.global_error += error
-                self.back_propagation(self.x_input[index], expected_output, predicted_output)
+                self.back_propagation(x_y_data[0], expected_output, predicted_output)
             self.error_x.append(i)
-            self.error_y.append(self.global_error/self.x_input.size)
+            self.error_y.append(self.global_error/len(self.train_data))
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionOneSingleHidden)")
             self.counter += 1
@@ -127,15 +127,15 @@ class NeuralNetwork(object):
         y_values_predicted = []
         y_values_actual = []
 
-        for index in range(0, self.x_input.size):
-            x_values.append(self.x_input[index])
-            y_values_predicted.append(self.forward_propagation(self.x_input[index]))
-            y_values_actual.append(self.y_output[index])
+        for x_y_data in self.test_data:
+            x_values.append(x_y_data[0])
+            y_values_predicted.append(self.forward_propagation(x_y_data[0]))
+            y_values_actual.append(x_y_data[1])
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        axes.plot(x_values, y_values_actual, label="Actual")
-        axes.plot(x_values, y_values_predicted, label="Predicted")
+        axes.scatter(x_values, y_values_actual, label="Actual", color="royalblue", s=10)
+        axes.scatter(x_values, y_values_predicted, label="Predicted", color="orange", s=10)
         axes.legend(loc="upper right")
         plt.xlabel("x-values")
         plt.ylabel("y-values")
