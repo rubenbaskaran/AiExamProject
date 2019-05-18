@@ -16,8 +16,8 @@ class NeuralNetwork(object):
         self.x_input = None
         self.y_output = None
         self.L2_output = None
-        self.error_x = []
-        self.error_y = []
+        self.error_x_axis = []
+        self.error_y_axis = []
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
@@ -85,13 +85,13 @@ class NeuralNetwork(object):
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(x_y_data[0], expected_output, predicted_output)
-            self.error_x.append(i)
-            self.error_y.append(self.global_error/len(self.train_data))
+            self.error_x_axis.append(i)
+            self.error_y_axis.append(self.global_error / len(self.train_data))
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionOneSingleHidden)")
             self.counter += 1
-        self.mse = self.error_y.__getitem__(len(self.error_y) - 1)
-        self.execution_time = dt.datetime.now() - self.timestamp_start
+        self.mse = np.round(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1), 10)
+        self.execution_time = str(dt.datetime.now() - self.timestamp_start).split('.')[0]
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -117,10 +117,10 @@ class NeuralNetwork(object):
         self.w2 += np.dot(self.L2_output.T, w2_delta) * self.learning_rate
 
     def plot_error(self):
-        plt.plot(self.error_x, self.error_y)
+        plt.plot(self.error_x_axis, self.error_y_axis)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
+        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)))
         plt.show()
 
     def test_network(self):
@@ -140,7 +140,7 @@ class NeuralNetwork(object):
         axes.legend(loc="upper right")
         plt.xlabel("x-values")
         plt.ylabel("y-values")
-        axes.set_title("Actual model vs. trained model (1 hidden layer)" + "\nMSE: " + str(self.error_y.__getitem__(len(self.error_y)-1)))
+        axes.set_title("Actual model vs. trained model (1 hidden layer)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)))
         plt.show()
 
     def sigmoid(self, x):

@@ -14,12 +14,11 @@ class NeuralNetwork(object):
         self.w2 = None
         self.train_data = None
         self.test_data = None
-        self.x_values = self.y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
         self.x_y_input = None
         self.z_output = None
         self.L2_output = None
-        self.error_x_y = []
-        self.error_z = []
+        self.error_x_axis = []
+        self.error_y_axis = []
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
@@ -39,23 +38,23 @@ class NeuralNetwork(object):
         csv_writer.write("\n" + str(self.hidden_size) + "," + str(self.epochs) + "," + str(self.execution_time) + "," + str(self.mse))
 
     def create_dataset(self):
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionTwoDataset.csv")
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "FunctionTwoDataset.csv")
         file = open(path, "w")
         file.write("x_input,y_input,z_output\n")
         string_builder = ""
         z_values = []
+        x_values = y_values = np.round(np.arange(-1, 1.05, 0.05), 3)
 
-        for x_value in self.x_values:
-            for y_value in self.y_values:
-                z_value = np.exp(-(x_value ** 2 + y_value ** 2) / 0.1)
+        for x_value in x_values:
+            for y_value in y_values:
+                z_value = np.round(np.exp(-(x_value ** 2 + y_value ** 2) / 0.1), 3)
                 z_values.append(z_value)
                 string_builder += str(x_value) + "," + str(y_value) + "," + str(z_value) + "\n"
         file.write(string_builder)
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
+        x_values, y_values = np.meshgrid(x_values, y_values)
         ax.plot_surface(x_values, y_values, np.array(z_values).reshape(41, 41))
         ax.set_title("Actual model")
         ax.set_zlim(0, 1)
@@ -63,17 +62,20 @@ class NeuralNetwork(object):
 
     def create_network(self):
         # Import data
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "FunctionTwoDataset.csv")  # TODO: Import to training & test variable
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "FunctionTwoDataset.csv")
         data_from_csv = pd.read_csv(path)
-        x_values = np.array(data_from_csv["x_input"])
-        y_values = np.array(data_from_csv["y_input"])
-        self.z_output = np.array(data_from_csv["z_output"])
+        x_values = np.round(np.array(data_from_csv["x_input"]), 3)
+        y_values = np.round(np.array(data_from_csv["y_input"]), 3)
+        self.z_output = np.round(np.array(data_from_csv["z_output"]), 3)
 
         x_y_input_builder = []
         for index in range(0, x_values.size):
-            x_y_input_builder.append([x_values[index], y_values[index]])
+            x_y_input_builder.append([x_values[index], y_values[index], self.z_output[index]])
         self.x_y_input = np.array(x_y_input_builder)
+        np.random.seed(1)
+        np.random.shuffle(self.x_y_input)
+        self.train_data = self.x_y_input[:1177]
+        self.test_data = self.x_y_input[1177:]
 
         # Weights
         self.w1 = np.random.randn(self.input_size, self.hidden_size)    # (2x20) between input and hidden
@@ -81,19 +83,20 @@ class NeuralNetwork(object):
 
     def start_training(self):
         for i in range(self.epochs):
-            for index in range(0, len(self.x_y_input)):
-                predicted_output = self.forward_propagation(self.x_y_input[index])
-                expected_output = self.z_output[index]
+            for x_y_z_data in self.train_data:
+                x_y_input = np.array([x_y_z_data[0], x_y_z_data[1]])
+                predicted_output = self.forward_propagation(x_y_input)
+                expected_output = x_y_z_data[2]
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
-                self.back_propagation(self.x_y_input[index], expected_output, predicted_output)
-            self.error_x_y.append(i)
-            self.error_z.append(self.global_error / len(self.x_y_input))
+                self.back_propagation(x_y_input, expected_output, predicted_output)
+            self.error_x_axis.append(i)
+            self.error_y_axis.append(self.global_error / len(self.train_data))
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionTwoSingleHidden)")
             self.counter += 1
-        self.mse = self.error_z.__getitem__(len(self.error_z) - 1)[0]
-        self.execution_time = dt.datetime.now() - self.timestamp_start
+        self.mse = np.round(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0], 10)
+        self.execution_time = str(dt.datetime.now() - self.timestamp_start).split('.')[0]
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -119,31 +122,35 @@ class NeuralNetwork(object):
         self.w2 += np.dot(np.array([self.L2_output]).T, np.array([w2_delta])) * self.learning_rate
 
     def plot_error(self):
-        plt.plot(self.error_x_y, self.error_z)
+        plt.plot(self.error_x_axis, self.error_y_axis)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        plt.title("Mean squared error for each epoch (1 hidden layer)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
         plt.show()
 
     def test_network(self):
+        x_values = []
+        y_values = []
         z_values_predicted = []
         z_values_actual = []
 
-        for index in range(0, len(self.x_y_input)):
-            z_values_predicted.append(self.forward_propagation(self.x_y_input[index])[0])
-            z_values_actual.append(self.z_output[index])
+        for x_y_z_data in self.test_data:
+            x_values.append(x_y_z_data[0])
+            y_values.append(x_y_z_data[1])
+            x_y_input = np.array([x_y_z_data[0], x_y_z_data[1]])
+            z_values_predicted.append(self.forward_propagation(x_y_input)[0])
+            z_values_actual.append(x_y_z_data[2])
 
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        x_values, y_values = np.meshgrid(self.x_values, self.y_values)
-        ax.plot_surface(x_values, y_values, np.array(z_values_actual).reshape(41, 41), color="royalblue")
-        ax.plot_surface(x_values, y_values, np.array(z_values_predicted).reshape(41, 41), color="orange")
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(x_values, y_values, z_values_actual, color="royalblue")
+        ax.scatter(x_values, y_values, z_values_predicted, color="orange")
 
         col1_patch = mpatches.Patch(color="royalblue", label='Actual')
         col2_patch = mpatches.Patch(color="orange", label='Predicted')
         plt.legend(handles=[col1_patch, col2_patch], loc=(0.0, 0.7))
 
-        ax.set_title("Actual model vs. trained model (1 hidden layer)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        ax.set_title("Actual model vs. trained model (1 hidden layer)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
         plt.xlabel("x-values")
         plt.ylabel("y-values")
         ax.set_zlim(0, 1)

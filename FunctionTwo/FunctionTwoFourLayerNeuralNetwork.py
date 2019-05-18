@@ -20,8 +20,8 @@ class NeuralNetwork(object):
         self.z_output = None
         self.L2_output = None
         self.L3_output = None
-        self.error_x_y = []
-        self.error_z = []
+        self.error_x_axis = []
+        self.error_y_axis = []
         self.global_error = 0
         self.counter = 1
         self.learning_rate = 0.5
@@ -91,13 +91,13 @@ class NeuralNetwork(object):
                 error = (expected_output - predicted_output) ** 2
                 self.global_error += error
                 self.back_propagation(self.x_y_input[index], expected_output, predicted_output)
-            self.error_x_y.append(i)
-            self.error_z.append(self.global_error / self.x_y_input.size)
+            self.error_x_axis.append(i)
+            self.error_y_axis.append(self.global_error / self.x_y_input.size)
             self.global_error = 0
             print("Epoch: " + str(self.counter) + "/" + str(self.epochs) + " (FunctionTwoMultiHidden)")
             self.counter += 1
-        self.mse = self.error_z.__getitem__(len(self.error_z) - 1)[0]
-        self.execution_time = dt.datetime.now() - self.timestamp_start
+        self.mse = np.round(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0], 10)
+        self.execution_time = str(dt.datetime.now() - self.timestamp_start).split('.')[0]
 
     # forward-propagate the input in order to calculate an output
     def forward_propagation(self, input_value):
@@ -130,10 +130,10 @@ class NeuralNetwork(object):
         self.w3 += np.dot(np.array([self.L3_output]).T, np.array([w3_delta])) * self.learning_rate
 
     def plot_error(self):
-        plt.plot(self.error_x_y, self.error_z)
+        plt.plot(self.error_x_axis, self.error_y_axis)
         plt.xlabel("Epoch")
         plt.ylabel("Mean squared error")
-        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        plt.title("Mean squared error for each epoch (2 hidden layers)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
         plt.show()
 
     def test_network(self):
@@ -154,7 +154,7 @@ class NeuralNetwork(object):
         col2_patch = mpatches.Patch(color="orange", label='Predicted')
         plt.legend(handles=[col1_patch, col2_patch], loc=(0.0, 0.7))
 
-        ax.set_title("Actual model vs. trained model (2 hidden layers)" + "\nMSE: " + str(self.error_z.__getitem__(len(self.error_z) - 1)[0]))
+        ax.set_title("Actual model vs. trained model (2 hidden layers)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
         plt.xlabel("x-values")
         plt.ylabel("y-values")
         ax.set_zlim(0, 1)
