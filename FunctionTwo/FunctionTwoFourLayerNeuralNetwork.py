@@ -161,8 +161,7 @@ class NeuralNetwork(object):
         col2_patch = mpatches.Patch(color="orange", label='Predicted')
         plt.legend(handles=[col1_patch, col2_patch], loc=(0.0, 0.7))
 
-        ax.set_title("Actual model vs. trained model (2 hidden layer)" + "\nMSE: " + str(
-            self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
+        ax.set_title("Actual model vs. trained model (2 hidden layer)" + "\nMSE: " + str(self.error_y_axis.__getitem__(len(self.error_y_axis) - 1)[0]))
         plt.xlabel("x-values")
         plt.ylabel("y-values")
         ax.set_zlim(0, 1)
