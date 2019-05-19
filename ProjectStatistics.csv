@@ -1,12 +1,12 @@
 Function_One_Single_Hidden
 neurons, epochs, execution_time, mse
-10,1000,0:00:22,1.1905287705
+9,900,0:00:14,0.6884576842
 Function_One_Multi_Hidden
 neurons, epochs, execution_time, mse
-10,1000,0:00:26,0.0172407902
+17,7000,0:02:41,0.0004362346
 Function_Two_Single_Hidden
 neurons, epochs, execution_time, mse
-10,1000,0:00:45,0.0375257588
+1,100,0:00:04,0.0320576276
 Function_Two_Multi_Hidden
 neurons, epochs, execution_time, mse
-10,1000,0:00:57,0.0001580852
+20,10000,0:10:50,2.14235e-05
