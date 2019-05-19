@@ -67,7 +67,7 @@ class NeuralNetwork(object):
         x_y_dataset_builder = []
         for index in range(0, self.x_input.size):
             x_y_dataset_builder.append([self.x_input[index], self.y_output[index]])
-        # np.random.seed(1)
+        np.random.seed(1)
         np.random.shuffle(x_y_dataset_builder)
         self.train_data = x_y_dataset_builder[:700]
         self.test_data = x_y_dataset_builder[700:]

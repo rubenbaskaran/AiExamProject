@@ -73,7 +73,7 @@ class NeuralNetwork(object):
         for index in range(0, x_values.size):
             x_y_input_builder.append([x_values[index], y_values[index], self.z_output[index]])
         self.x_y_input = np.array(x_y_input_builder)
-        # np.random.seed(1)
+        np.random.seed(1)
         np.random.shuffle(self.x_y_input)
         self.train_data = self.x_y_input[:1177]
         self.test_data = self.x_y_input[1177:]
