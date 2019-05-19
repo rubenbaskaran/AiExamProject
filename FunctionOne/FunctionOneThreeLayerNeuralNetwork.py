@@ -67,7 +67,7 @@ class NeuralNetwork(object):
         x_y_dataset_builder = []
         for index in range(0, self.x_input.size):
             x_y_dataset_builder.append([self.x_input[index], self.y_output[index]])
-        np.random.seed(1)
+        # np.random.seed(1)
         np.random.shuffle(x_y_dataset_builder)
         self.train_data = x_y_dataset_builder[:700]
         self.test_data = x_y_dataset_builder[700:]
@@ -134,7 +134,7 @@ class NeuralNetwork(object):
 
         figure = plt.figure()
         axes = figure.add_axes([0.1, 0.1, 0.8, 0.8])
-        axes.scatter(x_values, y_values_actual, label="Actual", color="royalblue", s=10)
+        axes.scatter(x_values, y_values_actual, label="Actual", color="royalblue", s=5)
         axes.scatter(x_values, y_values_predicted, label="Predicted", color="orange", s=10)
         axes.legend(loc="upper right")
         plt.xlabel("x-values")

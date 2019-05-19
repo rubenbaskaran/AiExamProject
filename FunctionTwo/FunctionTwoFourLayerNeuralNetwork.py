@@ -76,7 +76,7 @@ class NeuralNetwork(object):
         for index in range(0, x_values.size):
             x_y_input_builder.append([x_values[index], y_values[index], self.z_output[index]])
         self.x_y_input = np.array(x_y_input_builder)
-        np.random.seed(1)
+        # np.random.seed(1)
         np.random.shuffle(self.x_y_input)
         self.train_data = self.x_y_input[:1177]
         self.test_data = self.x_y_input[1177:]
@@ -155,8 +155,8 @@ class NeuralNetwork(object):
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(x_values, y_values, z_values_actual, color="royalblue")
-        ax.scatter(x_values, y_values, z_values_predicted, color="orange")
+        ax.scatter(x_values, y_values, z_values_actual, color="royalblue", s=5)
+        ax.scatter(x_values, y_values, z_values_predicted, color="orange", s=10)
 
         col1_patch = mpatches.Patch(color="royalblue", label='Actual')
         col2_patch = mpatches.Patch(color="orange", label='Predicted')
